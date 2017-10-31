@@ -1,0 +1,32 @@
+---
+title: "Basic Ordination Methods"
+subtitle: "Ordination 101 for Ecological Methods"
+author: "Jari Oksanen"
+date: "Nov 8 to 15, 2017"
+output:
+  xaringan::moon_reader:
+    css: ['default', './resources/gavins.css']
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      ratio: '16:9'
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(comment=NA,
+                      echo = FALSE, message = FALSE, warning = FALSE, cache = TRUE,
+                      fig.align = 'center', fig.height = 4.5, fig.width = 8, dev = 'svg')
+knitr::knit_hooks$set(crop.plot = knitr::hook_pdfcrop)
+options(htmltools.dir.version = FALSE)
+```
+```{r packages, include = FALSE, cache = FALSE}
+require('vegan')
+require('vegan3d')
+require('knitr')
+```
+---
+# Why Ordination?
+
+?
+---
