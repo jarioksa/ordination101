@@ -54,7 +54,7 @@ is  linear, but  community  data are  nonlinear.
 ---
 # 3 Cryptogams in Reindeer Pastures
 
-```{r bottpredict}
+```{r bottpredict, fig.height=5}
 bott <- varespec[, c("Pleuschr","Cladrang","Cladstel")]
 bott0 <- scale(bott, scale = FALSE)
 par(mar=c(4,4,1,1)+.1)
@@ -93,8 +93,8 @@ panel.lm(PC1, df$Cladstel, pch=16, col = 2, col.smooth=4)
 # What Was Explained?
 
 - PCA explains the **variance** of the data: the squared
-  differences between observed values $y$ and species means $\bar y$
-  $\sum_{i=1}^N(y_{ij} - \bar y_j)^2/(N-1)$
+  differences between observed values $y$ and species means $\bar y$:
+  $\mathrm{Var}(y_j) = \sum_{i=1}^N(y_{ij} - \bar y_j)^2/(N-1)$
   - NB., ordination always uses centred data so that $\bar y = 0$
 
 - In the example, the variances of three species were
@@ -131,6 +131,10 @@ panel.lm(PC1, df$Cladstel, pch=16, col = 2, col.smooth=4)
   variance
   - In the example, its eigenvalue is $\lambda_2 =$ `r round(mod$CA$eig[2], 1)`
     which is  `r round(100*mod$CA$eig[2]/mod$tot.chi, 1)`% of total variance
+
+- The sum of all $R$ eigenvalues is equal to the variances of all
+   species $\sum_{r=1}^R \lambda_r = \sum_{j=1}^S \mathrm{Var}(y_j)$:
+   The axes decompose variance into independent ordered components
 
 - In modern software, we do not find second and further PCs one-by-one
   with orthogonalization, but the interpretation of the results is
@@ -184,6 +188,7 @@ biplot(mod, type = c("text","points"))
 tmp <- ordisurf(mod ~ Cladstel, df, add = TRUE, col=4, knots=1)
 ```
 ]
+
 ---
 # Distance and Direction From the Origin
 
@@ -200,14 +205,100 @@ tmp <- ordisurf(mod ~ Cladstel, df, add = TRUE, col=4, knots=1)
 - Try yourself: where these species are most abundant and scarcest?
   Which species attain highest abundances and where? Which species
   replace each other and which are independent from each other?
-
 ]
 
 .pull-right[
+
 ```{r plot3sp2, fig.width=5}
 par(mar=c(4,4,4,1)+.1)
 palette(viridis(8))
 biplot(mod, col=c(4,1))
+```
+
+]
+
+---
+# Complete Reindeer Pasture Data
+
+.pull-left[
+
+- Analysis of complete data not too different from just three species
+
+- PCA analyses variances and shows absolute differences from the mean
+  $y - \bar y$: minor species change little in absolute units
+
+- Actually only some few species influence results, and the data are
+  not very multivariate
+
+]
+
+.pull-right[
+
+```{r pcavare, fig.width=5}
+par(mar=c(4,4,4,1)+.1)
+palette(viridis(8))
+modf <- rda(varespec)
+biplot(modf, col=c(4,1))
+```
+
+]
+
+---
+# Explaining Variance
+
+.pull-left[
+
+- Abundant species have high variance, and PCA explains variance
+
+- It may be very easy to explain variance, when only a few species
+  account for the most, because then data are not very
+  multidimensional
+
+- Minor species may be ecological indicators, but they have little
+  effect on community ordination with PCA
+
+- Three abundant cryptogams accounted for
+  `r round(100*mod$tot.chi/modf$tot.chi, 1)`% of total variance in the complete
+  data set, and are dominant in PCA
+
+]
+
+.pull-right[
+
+```{r varabu, fig.width=5}
+par(mar=c(4,4,1,1)+.1)
+v <- apply(varespec, 2, var)
+plot(colMeans(varespec), v, xlab="Mean Abundance", ylab="Variance", type="n")
+ordilabel(cbind(colMeans(varespec), v), priority = v, fill = "yellow")
+```
+
+]
+---
+# Equal Weights to All Species
+
+.pull-left[
+
+- Use correlation instead of variance and minimize residual $1-R^2$:
+  This gives equal weights to all species
+
+- Equalized data are more multidimensional, and scarce species will
+  also influence the result, and they change from the previous
+
+- PCA implies that species effects should be shown by arrows, but this
+  makes graphs very messy, and often it makes sense to drop arrows and
+  just show the species scores at arrowheads
+
+- They still should be interpreted like arrows: Distance and direction
+  from the origin counts
+
+]
+
+.pull-right[
+```{r pcacorr, fig.width=5}
+mod1 <- rda(varespec, scale=TRUE)
+palette(viridis(8))
+par(mar=c(4,4,1,1)+.1)
+plot(mod1, scaling="sites")
 ```
 ]
 ---
