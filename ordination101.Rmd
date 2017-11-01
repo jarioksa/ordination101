@@ -92,8 +92,124 @@ panel.lm(PC1, df$Cladstel, pch=16, col = 2, col.smooth=4)
 ---
 # What Was Explained?
 
-- PCA explains the **variance** of the data, that is $y$
+- PCA explains the **variance** of the data: the squared
+  differences between observed values $y$ and species means $\bar y$
+  $\sum_{i=1}^N(y_{ij} - \bar y_j)^2/(N-1)$
+  - NB., ordination always uses centred data so that $\bar y = 0$
 
+- In the example, the variances of three species were
+  `r round(apply(bott0, 2, var), 1)`, with sum
+  `r round(mod$tot.chi, 1)`, and the sum of residual variances of the PC
+  regression was `r round(mod$tot.chi - mod$CA$eig[1], 1)`
+
+- The variance explained by the first PC is the **eigenvalue** of the
+  axis, and it is the difference of total variance and residual
+  variance $\lambda_1 =$ `r round(mod$CA$eig[1], 1)` which is
+  `r round(100*mod$CA$eig[1]/mod$tot.chi, 1)`% of total variance
+
+- The coefficients (`r round(mod$CA$v[,1], 3)`) of three species are
+  the **species scores** used in ordination diagrams, and they are also
+  regression coefficients that project centred species abundances to
+  the PC
+  - NB., ordination always uses centred data so that intercept
+  is zero
+
+- The result of this projection are the sampling unit **(SU) scores**
+  that are used in ordination diagrams -- this is also called as the
+  **principal component**
+
+---
+# Second and Further Principal Components
+
+- Second PC has similar components, but is **orthogonal** to the
+  previous one:
+
+- Species scores and SU scores are orthogonal to (uncorrelated with)
+  correspoding scores in the previous axes
+
+- The second PC explains the largest possible amount of remaining
+  variance
+  - In the example, its eigenvalue is $\lambda_2 =$ `r round(mod$CA$eig[2], 1)`
+    which is  `r round(100*mod$CA$eig[2]/mod$tot.chi, 1)`% of total variance
+
+- In modern software, we do not find second and further PCs one-by-one
+  with orthogonalization, but the interpretation of the results is
+  still similar
+
+---
+# Is This Circular?
+
+- We explain species by species &mdash; and this sound badly circular
+
+- We perform no statistical testing, and what looks regression
+  actually is **rotation** of species data
+
+- We only like to find a way of looking at the data so that some first
+  (say PC1 and PC2) so as much of the variance of the data as possible
+
+- Then we can ignore the later axes and say that a **major part** of
+  variation in the data is displayed in the first dimensions that we
+  can graph
+
+- PCA is **not** a statistical method, but it is only a rotation of
+  the data
+
+---
+# Species Scores in Multidimensions
+
+.pull-left[
+
+- We had species scores for a single axis, but in 2 and more dimensions
+  we must look at all dimensions simultaneously
+
+- The coefficients together define the **direction** to which the
+  species abundance **increases** most steeply &mdash; and it
+  **decreases** in the opposite direction
+
+- The response is linear in 2D: the contours of linear trend surface are
+  perpendicular to the arrow
+
+- The estimated abundances of all species on each SU can be read by
+  projecting the SU point to the arrow: PCA **approximates** data
+
+- Species were centred: The zero contour goes through the origin
+
+]
+
+.pull-right[
+```{r plot3sp, fig.width=5}
+par(mar=c(4,4,4,1)+.1)
+palette(viridis(8))
+biplot(mod, type = c("text","points"))
+tmp <- ordisurf(mod ~ Cladstel, df, add = TRUE, col=4, knots=1)
+```
+]
+---
+# Distance and Direction From the Origin
+
+.pull-left[
+
+- In the origin, each species occurs at its average abundance $\bar y_j$
+
+- The further away from the origin SU is situated, the more strongly
+  species abundances differ from the average
+
+- For species the angles between arrows indicate similar pattern of
+  change, and the length of the arrow the steepness of the change
+
+- Try yourself: where these species are most abundant and scarcest?
+  Which species attain highest abundances and where? Which species
+  replace each other and which are independent from each other?
+
+]
+
+.pull-right[
+```{r plot3sp2, fig.width=5}
+par(mar=c(4,4,4,1)+.1)
+palette(viridis(8))
+biplot(mod, col=c(4,1))
+```
+]
 ---
 class:  inverse center middle
 
