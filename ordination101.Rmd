@@ -26,9 +26,11 @@ knitr::opts_chunk$set(rgl.newwindow = TRUE)
 ```
 ```{r packages, include = FALSE, cache = FALSE}
 require('vegan')
+data('varespec')
 require('vegan3d')
 require('rgl')
 require('knitr')
+require('viridis')
 ```
 
 ---
@@ -68,8 +70,69 @@ rglwidget()
 class: inverse center middle
 
 # PCA: Principal Components Analysis
+
+PCA  is the  basic ordination  method and  the one  that Statisticians
+know. It is poor for most uses,  but we need to know PCA to understand
+how other methods improve upon it.  The main problem of PCA is that it
+is  linear, but  community  data are  nonlinear.
 ---
-class: inverse center middle
+# From Regression to Ordination
+
+- What is the best possible predictor variable for a species? --- It
+  is the species itself!
+
+- Some species can also be strong in predicting the abundances of
+  other species
+
+- The best possible predictor is such a (linear) combination of
+  species that explains abundances of all species as well as possible
+
+- That linear combination is the first PCA axis
+---
+# 3 Cryptogams in Reindeer Pastures
+
+```{r bottpredict}
+bott <- varespec[, c("Pleuschr","Cladrang","Cladstel")]
+bott0 <- scale(bott, scale = FALSE)
+par(mar=c(4,4,1,1)+.1)
+palette(viridis(8))
+panel.lm <- function(x, y, col.smooth = 1, ...)
+{
+    usr <- par("usr"); on.exit(par(usr))
+    points(x, y, ...)
+    mod <- lm(y ~ x)
+    txt <- paste0("Resid.Var = ", round(summary(mod)$sigma^2, 1))
+    abline(mod, col = col.smooth, lwd=2)
+    text(mean(usr[1:2]), 0.9*usr[4], txt)
+}
+pairs(bott0, pch=16, col = 4, ylim = range(bott0), panel = panel.lm)
+```
+---
+# Best Predictor
+```{r bottpc1, fig.width=10}
+mod <- rda(bott0)
+koef <- mod$CA$v[,1]
+xlab = paste(formatC(koef,digits=2, flag="+"), names(koef), sep="*",collapse="")
+PC1 <- (bott0 %*% mod$CA$v)[,1]
+df <- data.frame(bott0)
+palette(viridis(8))
+par(mar=c(4,4,1,1)+.1, mfrow=c(1,3))
+ylim <- range(bott0)
+plot(Pleuschr ~ PC1, df, type="n", ylim=ylim, xlab=xlab)
+panel.lm(PC1, df$Pleuschr, pch=16, col = 2, col.smooth=4)
+plot(Cladrang ~ PC1, df, type="n", ylim=ylim, xlab=xlab)
+panel.lm(PC1, df$Cladrang, pch=16, col = 2, col.smooth=4)
+plot(Cladstel ~ PC1, df, type="n", ylim=ylim, xlab=xlab)
+panel.lm(PC1, df$Cladstel, pch=16, col = 2, col.smooth=4)
+
+```
+---
+# What Was Explained?
+
+- PCA explains the **variance** of the data, that is $y$
+
+---
+class:  inverse center middle
 
 ## PCA Trouble: It is Linear!
 
