@@ -19,51 +19,14 @@ knitr::opts_chunk$set(comment=NA,
                       fig.align = 'center', fig.height = 4.5, fig.width = 8, dev = 'svg')
 knitr::knit_hooks$set(crop.plot = knitr::hook_pdfcrop)
 options(htmltools.dir.version = FALSE)
-options(rgl.useNULL=TRUE)
-options(rgl.printRglwidget=FALSE)
-rgl::setupKnitr()
 knitr::opts_chunk$set(rgl.newwindow = TRUE)
 ```
 ```{r packages, include = FALSE, cache = FALSE}
 require('vegan')
 data('varespec')
-require('vegan3d')
-require('rgl')
 require('knitr')
 require('viridis')
 ```
-
----
-<!-- ****** webGL works poorly ******** -->
-# Multivariate Data
-
-```{r lichens0, webgl = TRUE}
-data(varespec)
-lich <- varespec[, c("Cladstel","Cladrang","Cladarbu")]
-lich <- scale(lich, scale = FALSE)
-bg3d(color = "white")
-clear3d()
-ordirgl(lich, ax.col = "blue")
-rglwidget()
-```
----
-
-# Why Ordination?
-
-```{r pca0, webgl = TRUE}
-data(varespec)
-m <- rda(lich)
-bg3d(color = "white")
-clear3d()
-ordirgl(m, scaling="site")
-x <- scores(m, dis="sp", scaling="site", choices=1:3)/2
-for(i in 1:3) rgl.lines(rbind(-x[i,],x[i,]), col="blue")
-orgltext(x, col="blue")
-rglwidget()
-```
----
-<!-- **** webGL works poorly **** -->
-
 <!-- ********** INTRO ************ -->
 <!-- ********** PCA ************** -->
 ---
