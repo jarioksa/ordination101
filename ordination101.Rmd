@@ -16,7 +16,7 @@ output:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(comment=NA,
                       echo = FALSE, message = FALSE, warning = FALSE, cache = TRUE,
-                      fig.align = 'center', fig.height = 4.5, fig.width = 8, dev = 'svg')
+                      fig.align = 'center', fig.height = 5, fig.width = 5.5, dev = 'svg')
 knitr::knit_hooks$set(crop.plot = knitr::hook_pdfcrop)
 options(htmltools.dir.version = FALSE)
 knitr::opts_chunk$set(rgl.newwindow = TRUE)
@@ -54,7 +54,7 @@ is  linear, but  community  data are  nonlinear.
 ---
 # 3 Cryptogams in Reindeer Pastures
 
-```{r bottpredict, fig.height=5}
+```{r bottpredict, fig.width=8, fig.height=5.5}
 bott <- varespec[, c("Pleuschr","Cladrang","Cladstel")]
 bott0 <- scale(bott, scale = FALSE)
 par(mar=c(4,4,1,1)+.1)
@@ -181,8 +181,8 @@ panel.lm(PC1, df$Cladstel, pch=16, col = 2, col.smooth=4)
 ]
 
 .pull-right[
-```{r plot3sp, fig.width=5}
-par(mar=c(4,4,4,1)+.1)
+```{r plot3sp}
+par(mar=c(4,4,1,1)+.1)
 palette(viridis(8))
 biplot(mod, type = c("text","points"))
 tmp <- ordisurf(mod ~ Cladstel, df, add = TRUE, col=4, knots=1)
@@ -209,14 +209,17 @@ tmp <- ordisurf(mod ~ Cladstel, df, add = TRUE, col=4, knots=1)
 
 .pull-right[
 
-```{r plot3sp2, fig.width=5}
-par(mar=c(4,4,4,1)+.1)
+```{r plot3sp2}
+par(mar=c(4,4,1,1)+.1)
 palette(viridis(8))
 biplot(mod, col=c(4,1))
 ```
 
 ]
+---
+# Rotation in Species Space
 
+### Please Add Me!
 ---
 # Complete Reindeer Pasture Data
 
@@ -233,14 +236,12 @@ biplot(mod, col=c(4,1))
 ]
 
 .pull-right[
-
-```{r pcavare, fig.width=5}
-par(mar=c(4,4,4,1)+.1)
+```{r pcavare}
+par(mar=c(4,4,1,1)+.1)
 palette(viridis(8))
 modf <- rda(varespec)
 biplot(modf, col=c(4,1))
 ```
-
 ]
 
 ---
@@ -265,7 +266,7 @@ biplot(modf, col=c(4,1))
 
 .pull-right[
 
-```{r varabu, fig.width=5}
+```{r varabu}
 par(mar=c(4,4,1,1)+.1)
 v <- apply(varespec, 2, var)
 plot(colMeans(varespec), v, xlab="Mean Abundance", ylab="Variance", type="n")
@@ -294,11 +295,13 @@ ordilabel(cbind(colMeans(varespec), v), priority = v, fill = "yellow")
 ]
 
 .pull-right[
-```{r pcacorr, fig.width=5}
+```{r pcacorr}
 mod1 <- rda(varespec, scale=TRUE)
 palette(viridis(8))
 par(mar=c(4,4,1,1)+.1)
-plot(mod1, scaling="sites")
+plot(mod1, scaling="sites", type="n")
+text(mod1, scaling="sites", dis="site", col = 1, cex=0.7)
+text(mod1, scaling="sites", dis="species", col=4, cex=0.8)
 ```
 ]
 ---
