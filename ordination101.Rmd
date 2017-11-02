@@ -23,7 +23,10 @@ knitr::opts_chunk$set(rgl.newwindow = TRUE)
 ```
 ```{r packages, include = FALSE, cache = FALSE}
 require('vegan')
-data('varespec')
+data('varespec', 'varechem', 'mite')
+require('labdsv')
+data('bryceveg')
+library('mgcv')
 require('knitr')
 require('viridis')
 ```
@@ -308,12 +311,171 @@ text(mod1, scaling="sites", dis="species", col=4, cex=0.8)
 class:  inverse center middle
 
 ## PCA Trouble: It is Linear!
+---
+# Linear Method
+
+- PCA builds upon idea of linear regression
+
+- PC axis are sometimes called as latent variables: unknown and hidden
+  real variables that we dig up from data
+
+- Community response to environmental variables is non-linear: PC axes
+  cannot find such variables
+
+```{r mtfgrad, fig.width=10, fig.height=3}
+source('data/mtfit.R')
+palette(viridis(6))
+par(mar=c(4,4,1,1)+.1)
+matplot(altfit, mtfit, type="l", lty=1, xlab="Altitude (m)", ylab="Species Response")
+```
+---
+# Horseshoe: Beware!
+
+.pull-left[
+
+- If species have nonlinear, unimodal response to gradients, the
+  gradient appears as a curve: **horseshoe artifact**
+
+- People often want to interpret axes as latent variables, but even
+  single gradient is not an axis: **Beware**
+
+- Even if you are aware of the risk of horseshoe, it can hide other
+  shorter gradients: using two dimensions for one gradient is wasteful
+  and confusing
+
+- In general, PCA **should not be used** for community data
+
+- PCA is useful for linear data, or for deriving new combined
+  variables for other analyses when PCA explains a large proportion of
+  variance
+
+]
+
+.pull-right[
+```{r horseshoe}
+mod <- rda(mtfit)
+palette(viridis(8))
+par(mar=c(4,4,1,1)+.1)
+plot(mod, dis="si", scaling="si", type="n")
+points(mod, dis="si", scaling="si", pch=16)
+```
+]
+---
+# Horseshoe is Common
+
+```{r morehorses, fig.width=10}
+palette(viridis(8))
+par(mfrow=c(1,3), mar=c(4,4,2,1)+.1)
+m1 <- rda(varespec)
+m2 <- rda(bryceveg)
+m3 <- rda(mite)
+plot(m1, dis="si", type="n", main="Reindeer Pastures")
+points(m1, dis="si", pch=16)
+plot(m2, dis="si", type="n", main="Bryce Canyon")
+points(m2, dis="si", pch=16)
+plot(m3, dis="si", type="n", main="Oribatid Mites")
+points(m3, dis="si", pch=16)
+```
+---
+# When Would We Expect a Horseshoe?
+
+
+- **Always** with community data
+
+- Even when we cannot see the horseshoe, it may be hidden below the
+  crumble of noisy analysis
+
+- Horseshoe can hide underlying gradients and disperse their effect
+  over several PCs so that they cannot be found and interpreted
+
+---
+# Niche for PCA
+
+.pull-left[
+
+- New synthetic variables from correlated measurements to avoid
+  problems of collinearity
+
+- For this PCA should explain a large amount of variance
+
+- Use only the subset of correlated variables that may be assumed to
+  descrige the same underlying (latent) variable: **measurement
+  model**
+
+- Use correlations when variables are not measured in the same units
+
+- Do not use axes directly: they may not be parallel to interpretable
+  variables
+
+]
+
+.pull-right[
+
+```{r latent}
+mod <- rda(varechem, scale=TRUE)
+palette(viridis(8))
+par(mar=c(4,4,1,1)+.1)
+biplot(mod, display="sp", col=1)
+```
+
+]
 
 <!-- ********* CA ************ -->
 ---
 class: inverse center middle
 
 # CA: Correspondence Analysis
+
+Correspondence Analysis is an eigenvector method just like PCA, and it
+can be seen as its variant. However, this small difference makes it
+handle nonlinear species responses better than PCA. For community
+data, CA is usually a much better alternative than PCA.
+
+---
+# Correspondence Analysis
+
+- In PCA we explain the differences of species from their average
+  $y_{ij} - \bar y_j$, using its mean square (variance) as a measure
+  of goodness of fit
+
+- In CA the expected value is derived both from the SU and species,
+  and the goodness of fit is $\chi^2$
+
+- We first scale the observed data so that their sum is one
+  $\left( \sum_{i=1}^N \sum_{j=1}^S y_{ij} = 1 \right)$
+  &mdash; that is, we divide data with its sum
+
+- If all communities have identical species composition, and all
+  species occur in equal proportion in all SUs, then the expected
+  abundance is $r_i c_j$ where $r_i$ is row (SU) sum and $c_j$ is the
+  column (species) sum: This takes the place of $\bar y_j$ of PCA
+
+- We look at proportional difference
+  $(y_{ij} - r_i c_j)/\sqrt{r_i c_j}$, and its square is
+  $\chi^2 = (y_{ij} - r_i c_j)^2/(r_i c_j)$:
+  This takes the place of variance of PCA
+
+- Then we proceed with regression to find the axes, just like in PCA
+  (except that we need to use weights $\sqrt{r_i}$, $\sqrt{c_j}$)
+
+---
+# The Small but Important Difference
+
+```{r cagam}
+palette(viridis(3))
+par(mar=c(4,4,1,1)+.1)
+mod <- cca(bott) # from PCA lecture
+CA1 <- mod$CA$u[,1]
+matplot(CA1, bott, pch=16, xlab = "CA axis 1", ylab="Species Abundance")
+legend("top", colnames(bott), pch=16, lty=1, col=1:3, bty="n")
+i <- order(CA1)
+for(k in 1:3) {
+   m <- gam(bott[,k] ~ s(CA1, k=4), family=quasipoisson)
+   lines(CA1[i], fitted(m)[i], lwd=2, col = k)
+}
+```
+---
+# PCA Orders Linearly, CA Packs
 
 ---
 class: inverse center middle
