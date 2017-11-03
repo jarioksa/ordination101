@@ -23,9 +23,13 @@ knitr::opts_chunk$set(rgl.newwindow = TRUE)
 ```
 ```{r packages, include = FALSE, cache = FALSE}
 require('vegan')
-data('varespec', 'varechem', 'mite')
+if (packageVersion('vegan') < '2.5.0')
+   stop("needs vegan 2.5-0")
+data('varespec', 'varechem', 'mite', 'dune')
 require('labdsv')
 data('bryceveg')
+require(analogue)
+data(abernethy)
 library('mgcv')
 require('knitr')
 require('viridis')
@@ -461,6 +465,26 @@ data, CA is usually a much better alternative than PCA.
 ---
 # The Small but Important Difference
 
+.pull-left[
+
+- CA is based on similar regression as PCA, but with
+  $\chi$-standardized data and weights
+
+- Regression is linear, but *observed* values of data rather pack so
+  that high values are close to each other along the axis
+
+- The response of species can be approximately unimodal: this matches
+  the gradient model of species responses
+
+- The solution can be better related to environmental variables than in PCA
+
+- CA is still **not** a completely unimodal ordination and it still
+  shows a curve artefact, but not as garbled as PCA
+
+]
+
+.pull-right[
+
 ```{r cagam}
 palette(viridis(3))
 par(mar=c(4,4,1,1)+.1)
@@ -474,8 +498,65 @@ for(k in 1:3) {
    lines(CA1[i], fitted(m)[i], lwd=2, col = k)
 }
 ```
+]
+
+
 ---
 # PCA Orders Linearly, CA Packs
+
+.pull-left[
+```{r pcatabasco}
+tabasco(varespec, rda(varespec), scale="log", col=viridis(10))
+```
+**PCA**
+]
+
+.pull-right[
+```{r catabasco, }
+tabasco(varespec, cca(varespec), scale="log", col=viridis(10))
+```
+**CA**
+]
+
+---
+# More Clearly in Sparse Data
+
+.pull-left[
+```{r pcatabadune}
+tabasco(dune, rda(dune), col=viridis(5))
+```
+**PCA:** Dutch Dune Meadows
+]
+
+.pull-right[
+```{r catabadune, }
+tabasco(dune, cca(dune), col=viridis(5))
+```
+**CA:** Diagonally structured table
+]
+---
+# CA Preserves Order
+
+- CA can also have a curve artefact with dominant long gradient, but
+  it is not garbled and involuted like the PCA horseshoe
+
+- First CA axis preserves the correct ordering: CA is a **seriation method** 
+
+```{r abernethy, fig.width=8, fig.height=3.5}
+par(mar=c(4,4,1,1)+.1, mfrow=c(1,2))
+palette(viridis(8))
+m0 <- rda(abernethy[,1:36])
+m1 <- cca(abernethy[,1:36])
+plot(m0, dis="si", scaling="si", type="n")
+lines(scores(m0, dis="si", scaling="si"), col=7)
+points(m0, dis="si", scaling="si", pch=16, col=1)
+plot(m1, dis="si", scaling="si", type="n")
+lines(scores(m1, dis="si", scaling="si"), col=7)
+points(m1, dis="si", scaling="si", pch=16, col=1)
+```
+.pull-right[
+Abernethy Forest pollen data (5515 to 12145 BP)
+]
 
 ---
 class: inverse center middle
