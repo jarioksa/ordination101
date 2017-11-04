@@ -26,6 +26,8 @@ require('vegan')
 if (packageVersion('vegan') < '2.5.0')
    stop("needs vegan 2.5-0")
 data('varespec', 'varechem', 'mite', 'dune', 'dune.env')
+data('dune.phylodis','dune.taxon')
+require('natto') # in github, natto::raodist()
 require('labdsv')
 data('bryceveg')
 require(analogue)
@@ -853,6 +855,155 @@ with(dune.env, points(mod, dis="si", pch=21, bg=viridis(4)[as.numeric(Management
 class: inverse center middle
 
 # PCoA: Principal Coordinates Analysis
+
+Principal Coordinates Analysis (PCoA) uses dissimilarities among SUs
+instead of rectangular data of SUs and variables. If dissamilarities
+are Euclidean distances, then PCoA is equal to PCA. However, the
+method can be used with other dissimilarities, and often these are
+useful for community analysis. PCoA is also known as metric or classic
+multidimensional scaling.
+---
+# Ordination of Distances
+
+- PCA was based on variances and linear projections of species when
+  deriving principal components from regressions
+
+- The same information can be extracted from distances among SUs
+
+- More precisely, they are known as Euclidean distances in the species
+  space
+
+- Why is it called **Euclidean**?
+
+- In species space, SUs are points on species axes that are at right
+  angle to each others. The *difference* of species $j$ abundance for two
+  SUs $i$ and $k$ is $y_{ij}-y_{kj}$ which is the *leg* or *cathetus* of a
+  right-angled triangle, and the *squared* Euclidean distance of these two SUs
+  over all *catheti* (species) is the squared *hypotenuse*
+  $d_{ik}^2 = \sum_{j=1}^S (y_{ij}-y_{kj})^2$.
+
+- It makes no sense to use Euclidean distances in PCoA, because PCA
+  will give the same result more easily, but we can use other
+  dissimilarities which are more useful in ecology
+
+- These dissimilarities are handled similarly as Euclidean distances,
+  but the results may be more useful (although there may be some
+  geometrical glitches that we can usually ignore)
+
+- All ordination methods we discuss are distance-based, and
+  eigenvector methods (PCA, CA) are based on Euclidean distances or
+  Euclidean distances of transformed data
+
+---
+# What is Wrong with Euclidean Distances?
+
+- **They have no fixed upper limit,** but distances can vary among SUs
+    that have nothing in common, and communities with high abundances
+    appear more different than communities with low abundances
+
+    - This can be cured with Euclidean distances of **transformed
+      data**
+    - For instance *Hellinger* or *Chord* distances have an
+      upper limit if there are no shared species
+      
+    - If a distance can be expressed as a Euclidean distance of
+      transformed data, it is better to use PCA with transformed data
+
+- **They are based on squared differences** giving undue influence to
+    exceptional high abundances
+
+    - Instead of squared differences $(y_{ij}-y_{kj})^2$ we can use
+      absolute differences $|y_{ij}-y_{kj}|$: *Manhattan* or
+      *city-block* distances
+      
+    - Some dissimilarity measures combine both points: Bray-Curtis
+      dissimilarity is based on absolute differences and is scaled to
+      maximum value $1$:
+      $d_{ik} = \frac{\sum_j |y_{ij}-y_{kj}|}{\sum_j (y_{ij}+y_{kj})}$
+
+- **Research interest dictates** to use a specific non-Euclidean
+    dissimilarity index
+---
+# Example: beta Diversity
+
+.pull-left[
+
+- We want to use Whittaker's beta diversity
+  $\beta = \gamma/\bar \alpha -1$, where $\gamma$ is the number of species in
+  pooled communities, and $\bar \alpha$ is the mean number of species in
+  communities
+
+- For two communities of $A$ and $B$ species with $J$ shared species, we have
+  $\gamma = A+B-J$ and $\bar \alpha = (A+B)/2$ giving
+$$\beta=\frac{A+B-J}{(A+B)/2}-1$$
+$$~=\frac{2(A+B-J)}{A+B}-\frac{A+B}{A+B}$$
+$$~=\frac{A+B-2J}{A+B}$$
+   which is Sørensen dissimilarity
+
+]
+
+.pull-right[
+
+```{r}
+palette(viridis(8))
+par(mar=c(4,4,1,1)+.1)
+d <- designdist(varespec, "(A+B-2*J)/(A+B)", "binary")
+dmod <- dbrda(d ~ 1)
+plot(dmod)
+```
+]
+---
+# Example 2: Phylogenetic Distance
+
+.pull-left[
+
+- In normal dissimilarities, all species are regarded as equal
+
+- If species are related, they would not contribute a full independent
+  species to the dissimilarities
+
+- Here we use the squareroot of Rao distance which is one of many
+  phylogenetic dissimilarity indices (and they can equally well be
+  used for related functional traits etc.)
+
+- If species have diverged more than 65 Myr ago, they are regarded as
+  completely independent
+
+- PCoA is distance-based, and has no information on species, but these
+  can be projected to the ordination afterwards similarly as species
+  scores in PCA
+
+]
+
+.pull-right[
+```{r}
+palette(viridis(8))
+par(mar=c(4,4,1,1)+.1)
+plot(hclust(dune.phylodis), hang=-1, ylab="Time (Myr)", main="", sub="", xlab="")
+abline(h=65, col=4)
+
+```
+]
+---
+# Example 2: Phylogenetic distance
+
+```{r fig.width=11}
+palette(viridis(8))
+par(mar=c(4,4,1,1)+.1, mfrow=c(1,2))
+m0 <- rda(dune)
+pl <- plot(m0, type="n")
+text(pl, "sites", pch=21, col=1, bg=1)
+text(pl, "species", col=3, cex=0.7)
+ordispider(m0, dune.taxon$Family, display="species", label=TRUE, col=3, cex=0.8)
+d <- distrao(dune, dune.phylodis, dmax=65)
+d <- sqrt(2*d) # raodist is 0.5*squared-Euclidean
+md <- dbrda(d ~ 1)
+sppscores(md) <- dune
+pl <- plot(md, type="n")
+text(pl, "sites", pch=21, col=1, bg=1)
+text(pl, "species", col=3, cex=0.7)
+ordispider(md, dune.taxon$Family, display="species", label=TRUE, cex=0.8)
+```
 ---
 class: inverse center middle
 
