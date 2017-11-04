@@ -25,7 +25,7 @@ knitr::opts_chunk$set(rgl.newwindow = TRUE)
 require('vegan')
 if (packageVersion('vegan') < '2.5.0')
    stop("needs vegan 2.5-0")
-data('varespec', 'varechem', 'mite', 'dune')
+data('varespec', 'varechem', 'mite', 'dune', 'dune.env')
 require('labdsv')
 data('bryceveg')
 require(analogue)
@@ -447,7 +447,7 @@ data, CA is usually a much better alternative than PCA.
 
 - We first scale the observed data so that their sum is one
   $\left( \sum_{i=1}^N \sum_{j=1}^S y_{ij} = 1 \right)$
-  &mdash; that is, we divide data with its sum
+  &mdash; that is, we divide data with its total
 
 - If all communities have identical species composition, and all
   species occur in equal proportion in all SUs, then the expected
@@ -463,7 +463,7 @@ data, CA is usually a much better alternative than PCA.
   (except that we need to use weights $\sqrt{r_i}$, $\sqrt{c_j}$)
 
 ---
-# The Small but Important Difference
+# Small but Important Difference
 
 .pull-left[
 
@@ -557,13 +557,299 @@ points(m1, dis="si", scaling="si", pch=16, col=1)
 .pull-right[
 Abernethy Forest pollen data (5515 to 12145 BP)
 ]
+---
+# Unimodal Responses in Multidimensions
+
+.pull-left[
+- CA packs species also in multidimensional space
+
+- Instead of an arrow of increase, the species score may be regarded
+  as a centre of abundance
+
+- It is said that CA approximates the unimodal model
+
+- We may think that the species scores gives the species maximum and
+  the abundance decreases to every direction from the centroid given
+  by the species score
+
+- In PCA species close to the origin changed little and was poorly
+  presented by the ordination, but in CA it really may have its
+  optimum there
+
+]
+
+.pull-right[
+```{r cascores, fig.height=5.5}
+par(mar=c(4,4,1.4,1)+.1, mfrow=c(2,2))
+palette(viridis(8))
+mod <- cca(dune)
+with(dune, tmp <- ordisurf(mod ~ Poaprat, bubble=2, family=quasipoisson, knots=2, col=6, scaling="si", main="Poa pratensis"))
+with(dune, tmp <- ordisurf(mod ~ Trifrepe, bubble=2, family=quasipoisson, knots=2, col=6, scaling="si", main="Trifolium repens"))
+with(dune, tmp <- ordisurf(mod ~ Lolipere, bubble=2, family=quasipoisson, knots=2, col=6, scaling="si",main="Lolium perenne"))
+with(dune, tmp <- ordisurf(mod ~ Juncarti, bubble=2, family=quasipoisson, knots=2, col=6, scaling="si", main="Juncus articulatus"))
+```
+]
+
+---
+# Numbers and Interpretation
+
+.pull-left[
+
+- Sum of all eigenvalues $\sum_k \lambda_k = \chi^2$, and
+  $\lambda_k / \chi^2$ gives the proportion of inertia explained by the axis
+
+- This inertia is **not** variance but $\chi^2$, and eigenvalues or percentages
+  cannot be compared to PCA
+
+- High eigenvalue is good, but too high (say, $\lambda > 0.7$) are
+  suspicious: disjunct or partly disjunct data where a group of SUs
+  shares hardly anything (or nothing) with others
+
+- Species scores can be seen as points indication species optimum
+  instead of arrows of increase in PCA
+
+- Both species and SU scores are **weighted averages** of each other
+  &mdash; but exact relationship depends on scaling in graphs
+
+]
+
+.pull-right[
+
+```{r caplot}
+palette(viridis(8))
+par(mar=c(4,4,1,1)+.1)
+plot(mod, scaling="sites", type="n")
+text(mod, scaling="sites", dis="site", col = 1, cex=0.7)
+text(mod, scaling="sites", dis="species", col=4, cex=0.8)
+```
+
+]
+
+---
+# Weighted Averages and Packing
+
+.pull-left[
+```{r caspecwa}
+par(mar=c(4,4,1,1)+.1)
+palette(viridis(8))
+with(dune, tmp <- ordisurf(mod ~ Lolipere, bubble=2.5, family=quasipoisson, knots=2, main="scaling='species'", pch=21, col=1, bg=4))
+text(mod, dis="sp", cex=0.6, col=3)
+with(dune, ordispider(mod, Lolipere>0, w=Lolipere, label=FALSE, show=TRUE, col=4))
+ with(dune, plot(envfit(mod ~ rep("A",nrow(dune)), w=Lolipere), labels="Lolipere", bg=8))
+```
+**Dots:** SUs, *size:* abundance of *Lolium perenne*, **Text:** species
+]
+
+.pull-right[
+```{r casitewa}
+par(mar=c(4,4,1,1)+.1)
+palette(viridis(8))
+plot(mod, scaling="si", type="n", main="scaling='sites'")
+ordispider(mod, unlist(dune[18,]>0), scaling="si", w = unlist(dune[18,]), show=T, display="sp", col=4)
+cl <- rep("white", nrow(dune))
+cl[18] <- palette()[8]
+ordilabel(mod, dis="si", cex=0.7, scaling="si", fill=cl)
+points(mod, scaling="si", display="sp", cex=unlist(dune[18,]/2+0.4), pch=21, bg=4, col=1)
+```
+**Text:** SUs, **Dots:** species, *size:* abundance in SU 18
+
+]
 
 ---
 class: inverse center middle
 
 # Interpretation: Ordination and External Variables
----
 
+Gradient model is the deep idea of ordination: If sampling units are
+close to each other in ordination, they occur in similar environments,
+and if they are far away in ordiation, the environments differ. If our
+ordination model is such that it can be assumed to be consistent with
+gradient model (*i.e.*, it is able to handle unimodal species
+responses), we can try to identify the underlying environmental
+variables that cause the ordination structure.
+
+---
+# Fitted Vectors
+
+.pull-left[
+
+- Most popular method of displaying continuous variables
+- Can show many variables in one graph
+- Implies a **linear trend** surface, similarly as species arrows in PCA
+
+- **Direction** shows the steepest change in variable: the direction
+  of the **gradient**
+  - Gradients are **not** parallel to axes: do **not** interpret axes, but gradients
+
+- **Length** shows the relative importance or the strength of the variable
+
+- The arrows is drawn from the origin and shows the direction of
+  increase: there is equally strong **decrease to opposite** direction
+
+]
+
+.pull-right[
+```{r envfit}
+par(mar=c(4,4,1,1)+.1)
+palette(viridis(8))
+vmod <- cca(varespec)
+plot(vmod, dis="si", type="n")
+points(vmod, pch=21, col=1, bg=4)
+ef <- envfit(vmod ~ ., varechem)
+plot(ef, col=1, bg=8)
+```
+]
+---
+# Linear Trend Surface: Is it Adequate?
+
+```{r ordisurf, fig.width=10}
+palette(viridis(8))
+par(mar=c(4,4,1,1)+.1, mfrow=c(1,2))
+tmp <- ordisurf(vmod ~ Al, varechem, bubble=2.5, pch=21, col=4, bg=4, main="")
+abline(h=0, v=0, lty=3)
+plot(envfit(vmod ~ Al, varechem), col=1, bg=8)
+tmp <- ordisurf(vmod ~ N, varechem, bubble=2.5, pch=21, col=4, bg=4, main="")
+abline(h=0, v=0, lty=3)
+plot(envfit(vmod ~ N, varechem), col=1, bg=8)
+```
+
+]
+
+.pull-right[
+]
+
+---
+# Significance tests
+
+.pull-left[
+
+- The strength of the fitted vector is given by the correlation $r$
+  (or its square $r^2$) to the direction of the coordinates
+
+- **Permutation tests:** Rows of environmental variables are shuffled
+    into random order and $r^2$ is calculated
+
+- The $P$-value is the probability that $r^2$ of random permutation is
+  larger or equal to the observed value of fitted vector
+
+- If this probability is low, say $P \le 0.05$, the variable is often
+  regarded as significantly different from random
+
+- Each variable is fitted independently, and other (correlated)
+  variables do not influence its significance
+
+]
+
+.pull-right[
+```{r echo=FALSE, results=TRUE}
+ef$vectors
+```
+]
+
+---
+# Categorical Variables (Factors)
+
+.pull-left[
+
+- For one (and with tricks for two) factor we can show its value for
+  each point
+
+- The mean location or the **centroid** can be shown for several factors
+
+- We also must assess the dispersion of points about the centroid
+  &mdash; for this there are several graphical tools (next slide) for
+  one factor in time
+
+- Goodness of fit can be assessed as the proportion of total variance
+  of points that can explained by the centroids
+
+  - $r^2$ is the same statistic as for vectors, and for factors it
+    gives the proportion of variance accounted for by the factor
+    centroids
+
+
+
+]
+
+.pull-right[
+```{r factor}
+par(mar=c(4,4,1,1)+.1)
+palette(viridis(8))
+eff <- envfit(mod ~ Management, dune.env)
+plot(mod, dis="si", type="n")
+with(dune.env, points(mod, dis="si", pch=21, bg=viridis(4)[as.numeric(Management)]))
+plot(eff, labels=levels(dune.env$Management), bg=8)
+legend("topright", levels(dune.env$Management), pch=21, pt.bg=viridis(4), title = "Management")
+```
+]
+---
+# Displaying Factors
+
+```{r factorshow, fig.width=8, fig.height=5.6}
+par(mar=c(3,4,1,1)+.1, mfrow=c(2,2))
+palette(viridis(8))
+plot(mod, dis="si", type="n", main="Spider")
+ordispider(mod, dune.env$Management, col=viridis(4), label=TRUE)
+with(dune.env, points(mod, dis="si", pch=21, bg=viridis(4)[as.numeric(Management)]))
+plot(mod, dis="si", type="n", main="Convex Hull")
+ordihull(mod, dune.env$Management, draw="poly", col=viridis(4), label=TRUE)
+with(dune.env, points(mod, dis="si", pch=21, bg=viridis(4)[as.numeric(Management)]))
+plot(mod, dis="si", type="n", main="SD Ellipse")
+ordiellipse(mod, dune.env$Management, col=viridis(4), draw="poly", label=TRUE)
+with(dune.env, points(mod, dis="si", pch=21, bg=viridis(4)[as.numeric(Management)]))
+plot(mod, dis="si", type="n", main="Enclosing Ellipse")
+ordiellipse(mod, dune.env$Management, kind="ehull", col=viridis(4), label=TRUE)
+with(dune.env, points(mod, dis="si", pch=21, bg=viridis(4)[as.numeric(Management)]))
+```
+
+---
+# Significance Tests for Factors
+
+.pull-left[
+```{r echo=FALSE, results=TRUE}
+eff$factors
+```
+
+- **Confidence ellipse** is derived from Standard Error ellipse and
+    shows the likely location of the centroid
+    - SD ellipse shows the dispersion of points
+
+- If confidence ellipses do not overlap, they are approximately $\pm$
+  different at the given level
+
+]
+
+.pull-right[
+```{r confell}
+palette(viridis(8))
+par(mar=c(4,4,1,1)+.1)
+plot(mod, dis="si", type="n", main="95% Confidence Ellipse")
+ordiellipse(mod, dune.env$Management, kind="se", conf=0.95, draw="poly", col=viridis(4), label=TRUE)
+with(dune.env, points(mod, dis="si", pch=21, bg=viridis(4)[as.numeric(Management)]))
+```
+]
+
+---
+# Lessons
+
+- Fitted vectors are the most concise method of displaying the effects
+  of continuous environmental variables, **but...**
+
+- They imply a linear trend, and you should always check that this is adequate
+
+- The environmental variables are not usually parallel to axes, but
+  they are oblique
+
+- You should interpret the directions of the gradients (and the arrow
+  points to the steepest gradient) instead of axes
+
+- You should **never** **interpret** **axes**, but direction in the
+  ordination space
+
+- Significance tests can help in interpretation of results, but they
+  should not be trusted blindly (or not at all): they are only correlations
+
+---
 class: inverse center middle
 
 # PCoA: Principal Coordinates Analysis
