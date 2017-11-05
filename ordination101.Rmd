@@ -25,7 +25,7 @@ knitr::opts_chunk$set(rgl.newwindow = TRUE)
 require('vegan')
 if (packageVersion('vegan') < '2.5.0')
    stop("needs vegan 2.5-0")
-data('varespec', 'varechem', 'mite', 'dune', 'dune.env')
+data('varespec', 'varechem', 'mite', 'mite.env', 'dune', 'dune.env')
 data('dune.phylodis','dune.taxon')
 require('natto') # in github, natto::raodist()
 require('labdsv')
@@ -1008,4 +1008,227 @@ ordispider(md, dune.taxon$Family, display="species", label=TRUE, cex=0.8)
 class: inverse center middle
 
 # NMDS: Nonmetric Multidimensional Scaling
+
+PCA, CA & PCoA are eigenvector methods. They map community
+dissimilarities linearly so that with the maximum number of dimensions
+the dissimilarities are exactly represented, but some first dimensions
+show as much as possible of the dissimilarities. NMDS is completely
+different: it maps dissimilarities non-linearly onto low-dimensional
+ordination. It assumes very little of data or response models and is
+therefore more robust than eigenvector methods with their strict
+parametric mapping.
 ---
+# Eigenvector Methods: Linear Mapping
+
+.pull-left[
+
+- Eigenvector methods *decompose* observed dissimilarities
+- With all possible axes, they reproduce exactly observed dissimilarities
+- First axes show the largest possible amount of observed dissimilarities
+
+- They map observed dissimilarities linearly so that they approach the
+  original dissimilarities from below: each new axis *adds* to
+  estimated dissimilarities
+
+- Eigenvector methods may have their fixed way of defining observed
+  dissimilarities: **PCA** uses Euclidean distances and **CA** uses
+  $\chi$-distances (which are Euclidean distances of
+  $\chi^2$-transformed data)
+
+]
+
+.pull-right[
+
+```{r}
+par(mar=c(4,4,1,1)+.1)
+palette(viridis(8))
+stressplot(cca(mite), l.col=2, p.col=6)
+```
+Oribatid mites: 2-dim CA of $\chi$-distances
+
+]
+
+---
+# NMDS: Monotone Mapping
+
+.pull-left[
+
+- NMDS maps dissimilarities non-linearly onto low-dimensional ordination
+
+- **Monotone regression**: Euclidean distances of points in the
+    ordination space are **rank-order similar** to community
+    dissimilarities
+    - The **ordination space** is metric, but the **regression** is non-metric
+
+- Rank-order similar: if *observed dissimilarity* $d_a < d_b$ then
+  Euclidean *ordination distance* $\delta_a < \delta_b$
+  
+- The rank orders of observed dissimilarities cannot be exactly
+  preserved by rank-orders of ordination distances in low-dimensional
+  solutions, and this causes **stress**
+
+- **Stress:** scatter of observed dissimilarities against
+    expected monotone regression
+
+]
+
+.pull-right[
+
+```{r}
+par(mar=c(4,4,1,1)+.1)
+palette(viridis(8))
+mmod <- metaMDS(mite, trace=FALSE, parallel=2)
+stressplot(mmod, l.col=2, p.col=6)
+```
+.small[Oribatid mites: NMDS in 2D]
+
+]
+---
+# Advantages of NMDS
+
+- Eigenvector methods can give good ordination if the inherent
+  ordination model is similar to the model species response to
+  gradients
+
+  - PCA model is linear and poor, but CA can cope with some regular
+    unimodal response models and give good results
+
+- NMDS does not assume any specific response model, but it can adjust
+  to many models &mdash; even non-regular &mdash; and this makes it
+  **robust**
+
+- Robust: assumes little of data and tolerates violations of
+  assumptions
+
+- Can use ecological more meaningful dissimilarities than Euclidean
+  distances and $\chi$-distances of PCA and CA
+  
+  - Shares this feature with PCoA (which still applies Euclidean
+    mapping to these dissimilarities)
+
+- Champion in tests with simulated data with non-regular unimodal
+  species responses
+
+---
+## How Eigenvector Methods Differ from NMDS?
+
+- **Origin:** shows the average (expected) community composition in
+    eigenvector methods, but has **no** special meaning in NMDS
+
+    - It is convenient to have the origin in the middle of the
+      ordination in NMDS, but it means nothing: All that means is the
+      configuration of points and distances between points &mdash; and
+      these do not depend on the location of the origin
+
+- **First axis** shows the major variation of the *data* (in terms of
+    inertia, either variance of $\chi^2$) in eigenvector methods, but
+    has **no** special meaning in NMDS
+
+    - It is convenient to rotate NMDS space so that the first axis
+      shows the major variation in the *ordination*, but it means
+      nothing: All that means is the configuration of points and
+      distances between points &mdash; and these do not depend on the
+      directions of the axes
+
+    - For convenience NMDS axes are often rotated to Principal
+      Components, but they can be rotated to be parallel to
+      environmental variables or any other direction
+
+- What is in common is that NMDS and Eigenvector methods (PCA, CA, PCoA)
+  have metric ordination space that can be interpreted in the same way
+  for the configuration of points and using environmental variables
+---
+# These NMDS Ordinations are Identical
+
+```{r fig.width=11}
+palette(viridis(8))
+par(mar=c(4,4,1,1)+.1, mfrow=c(1,2))
+plot(mmod, type="n")
+text(mmod, dis="si", col=1, cex=0.7)
+text(mmod, dis="sp", col=5, cex=0.6, xpd=TRUE)
+plot(envfit(mmod ~ SubsDens + WatrCont + Shrub, mite.env), col=3, bg=8, xpd=TRUE)
+mrot <- MDSrotate(mmod, mite.env$WatrCont)
+plot(mrot, type="n")
+text(mrot, dis="si", col=1, cex=0.7)
+text(mrot, dis="sp", col=5, cex=0.6, xpd=TRUE)
+plot(envfit(mrot ~ SubsDens + WatrCont + Shrub, mite.env), col=3, bg=8, xpd=TRUE)
+
+```
+---
+## Abernethy: Dissimilarity & Mapping
+
+```{r abergrid, fig.width=8,fig.height=5.5, results=FALSE}
+palette(viridis(8))
+par(mar=c(4,4,1,1)+.1, mfrow=c(2,2))
+#x <- rbinom(prod(dim(mtfit)), 1, mtfit)
+#dim(x) <- dim(mtfit)
+x <- abernethy[,1:36]
+m1 <- rda(decostand(x, "hell"), scale=FALSE)
+pl <- plot(m1, dis="si", scaling="si", type="n", main="PCA: Hellinger")
+tmp <- ordisurf(pl, abernethy$Age, add=T, col=4)
+grp <- rep(1, nrow(x)) # for ordiarrows
+ordiarrows(pl, grp, col=7)
+points(pl, dis="si", pch=16, col=2)
+m2 <- cca(x)
+pl <- plot(m2, dis="si", scaling="si", type="n", main="CA: Chi")
+tmp <- ordisurf(pl, abernethy$Age, add=T, col=4)
+ordiarrows(pl, grp, col=7)
+points(pl, dis="si", pch=16, col=2)
+m3 <- dbrda(vegdist(wisconsin(x))~1)
+pl <- plot(m3, dis="si", scaling="si", type="n", main="PCoA: Bray-Curtis / Wisconsin")
+tmp <- ordisurf(pl, abernethy$Age, add=T, col=4)
+ordiarrows(pl, grp, col=7)
+points(pl, dis="si", pch=16, col=2)
+m4 <- metaMDS(vegdist(wisconsin(x)), trace=FALSE)
+m4 <- MDSrotate(m4, abernethy$Age)
+pl <- plot(m4, dis="si", scaling="si", type="n", main="NMDS: Bray-Curtis / Wisconsin")
+tmp <- ordisurf(pl, abernethy$Age, add=T, col=4)
+ordiarrows(pl, grp, col=7)
+points(pl, "sites", pch=16, col=2)
+```
+---
+## Stress Plot Indicates NMDS Does Best
+
+```{r aberstress, fig.width=8,fig.height=5.5, results=FALSE}
+par(mar=c(4,4,1,1)+.1, mfrow=c(2,2))
+palette(viridis(8))
+stressplot(m1, l.col=2, p.col=6, main="PCA: Hellinger")
+stressplot(m2, l.col=2, p.col=6, main="CA: Chi")
+stressplot(m3, l.col=2, p.col=6, main="PCoA: Bray-Curtis / Wisconsin")
+stressplot(m4, l.col=2, p.col=6, main="NMDS: Bray-Curtis / Wisconsin")
+```
+---
+# Is NMDS Credible?
+
+.pull-left[
+
+- NMDS is the only method that does not produce a curve &mdash; but is
+  this credible?
+
+- There is a cycle in SU sequence in the oldest times. Species scores
+  indicate that the cycle is *Rumex* &mdash; *Anthyllis vulneraria*
+  &mdash; Graminoids &mdash; *Artemisia* and then going to the linera
+  succession *Juniperus communis* &mdash; *Betula* &mdash; *Pinus
+  sylvestris* &mdash; *Alnus glutinosa*
+
+- This looks like a credible cycle of pioneer communities (*Rumex*)
+  and tundra steppes (*Artemisia*) before going to regular forest
+  succession
+
+- All other methods had a curve that hid the pioneer cycle
+
+]
+
+.pull-right[
+
+```{r abernmds}
+par(mar=c(4,4,1,1)+.1)
+palette(viridis(8))
+sppscores(m4) <- x
+pl <- plot(m4, type="n")
+text(pl, "sites", labels=abernethy$Age, cex=0.6)
+ordiarrows(pl, rep("a",nrow(abernethy)), col=7)
+ordilabel(pl, dis="sp", cex=0.7, labels=make.cepnames(colnames(x)), priority=colSums(x), col=3)
+```
+
+]
