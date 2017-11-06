@@ -268,7 +268,7 @@ panel.lm <- function(x, y, col.smooth = 1, ...)
 {
     usr <- par("usr"); on.exit(par(usr))
     points(x, y, ...)
-    mod <- lm(y ~ x)
+    mod <- lm(y ~ x - 1)
     txt <- paste0("Resid.Var = ", round(summary(mod)$sigma^2, 1))
     abline(mod, col = col.smooth, lwd=2)
     text(mean(usr[1:2]), 0.9*usr[4], txt)
@@ -287,11 +287,11 @@ palette(viridis(8))
 par(mar=c(4,4,1,1)+.1, mfrow=c(1,3))
 ylim <- range(bott0)
 plot(Pleuschr ~ PC1, df, type="n", ylim=ylim, xlab=xlab)
-panel.lm(PC1, df$Pleuschr, pch=16, col = 2, col.smooth=4)
+panel.lm(PC1, df$Pleuschr, pch=16, col=2, col.smooth=4)
 plot(Cladrang ~ PC1, df, type="n", ylim=ylim, xlab=xlab)
-panel.lm(PC1, df$Cladrang, pch=16, col = 2, col.smooth=4)
+panel.lm(PC1, df$Cladrang, pch=16, col=2, col.smooth=4)
 plot(Cladstel ~ PC1, df, type="n", ylim=ylim, xlab=xlab)
-panel.lm(PC1, df$Cladstel, pch=16, col = 2, col.smooth=4)
+panel.lm(PC1, df$Cladstel, pch=16, col=2, col.smooth=4)
 
 ```
 ---
