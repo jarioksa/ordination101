@@ -1096,6 +1096,35 @@ stressplot(mmod, l.col=2, p.col=6)
 
 ]
 ---
+# Stress and Iterations
+
+$$\mathrm{stress} = \frac{\sum_{i \ne j}(\mathrm{monotone}(d_{ij})-\delta_{ij})^2}{\sum_{i \ne j}\delta_{ij}^2}\;,$$
+where $d$ are the calculated dissimilarities between SUs $i$ and $j$,
+$\mathrm{monotone}()$ is their monotone regression fit, and $\delta$ are the
+Euclidean distances between points in the ordination
+
+- In other words: stress is the spread of points with respect to
+  monotone regression when SUs are put on the ordination
+
+- The ordination space is *metric* and Euclidean: the *non-metric*
+  refers only to the regression used to transform observed
+  dissimilarities (the step line in plots)
+
+- NMDS is computationally much more demanding than eigenvector methods
+  that are based on linear algebra (and the moden algorithms are
+  really good in linear algebra)
+
+- The solution is iterative and there is no guaranteed convergence,
+  but we must repeat and judge the solutions for goodness and
+  stability
+
+- Stress is (in theory) in the range $0 \ldots 1$, but in practice
+  stress $< 0.1$ is extremely good, stress close to $0$ hints to
+  problems (like insufficient data or disjunctions), and random
+  configurations in 2D have stress about $0.4$, leaving stress $0.2$
+  as commonly very good
+
+---
 # Advantages of NMDS
 
 - Eigenvector methods can give good ordination if the inherent
