@@ -39,6 +39,196 @@ require('viridis')
 Source files of these slides are [in github](https://github.com/jarioksa/ordination101)
 
 <!-- ********** INTRO ************ -->
+---
+class: inverse center middle
+
+# Ordination: Why and What?
+---
+# Multivariate Data
+
+- Ordination methods are multivariate graphical tools to display
+  multivariate data
+
+- Multivariate data have several variables on several sampling
+  units (SU), and such data are best analysed with multivariate
+  methods
+
+- We do not have one obvious dependent variable in multivariate data,
+  but we would still want to understand the major features of the data
+
+  - Species abundances in sampling sites, OTUs of DNA sequence
+    analysis in sampling units, measurements of chemical and physical
+    conditions in sampling stations *etc*
+
+- If we have a clear hypothesis with a clear dependent variable, it is
+  better to use univariate methods
+
+- Sometimes we can summarize multiple variables into one indicator
+  (*e.g*, diversity), and then we can use univariate methods
+
+- If all else fails, we *must* use multivariate methods
+
+---
+# Multivariate Data and Display
+
+.pull-left[
+.small[
+```{r echo=FALSE}
+varespec
+```
+]
+]
+
+.pull-right[
+```{r mvexample, results=FALSE}
+par(mar=c(4,4,1,1)+.1)
+palette(viridis(8))
+m <- metaMDS(varespec)
+m <- MDSrotate(m, varechem$Humdepth)
+ef <- envfit(m, varechem)
+plot(m, type="n")
+text(m, dis="si", col=1, cex=0.7)
+text(m, dis="sp", col=5, cex=0.6)
+plot(ef, col=3, p.=0.05)
+```
+]
+---
+# Reading Ordination Plots
+
+.pull-left[
+
+- The ordination graphs shows the main features of similarities and differences in the data
+
+- If two SUs are close to each other, they have similar communities
+- If two SUs are far away from each other, the communities differ
+
+- If two species are close to each other, they have similar occurrence
+  patterns, and occur most abundantly in SUs that are close to them
+- And vice versa for two species far away from each other
+
+- It can be assumed that environmental conditions are behind these
+  differences and we can identify the external variables that explain
+  the ordination structure
+
+]
+
+.pull-right[
+```{r mvexample2}
+par(mar=c(4,4,1,1)+.1)
+palette(viridis(8))
+# redraw the previous
+plot(m, type="n")
+text(m, dis="si", col=1, cex=0.7)
+text(m, dis="sp", col=5, cex=0.6)
+plot(ef, col=3, p.=0.05)
+```
+]
+
+---
+# Why Ordination?
+
+- Ordination provides a graphical summary of main structure in the data
+
+- Instead of looking at a huge number of variables with a huge number
+  of observations, we compress multidimensional data into two (or
+  three) dimensions that we can easily inspect and comprehend
+
+- Ordination is **descriptive**, but it can help us to understand the
+  main features of the data
+
+- Often ordination is *private*: we familiarize with the data so that
+  we can formulate research hypotheses, check the adequacy of our
+  hypothesis, and communicate the results to other people
+
+  - *Private:* we do it, but we do not tell anybody what we do in our privacy
+
+  - Ordination need not be published or shown to anyone to be useful
+
+- Sometimes we can build rigorous tests on ordination results: these
+  summarize the major structure and allow using simpler test
+  procedures
+
+  - Some ordination methods allow testing within themselves
+
+- Many people never need ordination, but some do &mdash; that all
+  depends on your research questions
+
+---
+# The Purpose of These Lectures
+
+- Provide information on ordination for those who may need it
+
+- Even if you do not need them yourself, it is useful to understand
+  how to interpret publications that use ordination
+
+- These lectures are not about using ordination software, but they are
+  about the **methods**
+
+  - There are several alternative software implementations to perform
+    these analyses, althout the lecture slides were written using
+    **R** statistical language and mainly with **vegan** package
+
+  - There are no **R** commands in these slides, but if you *want* to
+    see them, look at the
+    [source code](https://github.com/jarioksa/ordination101)
+    of these lectures
+
+- I avoid mathematics, but also over-simplification and
+  superficiality: I try to *explain* how these methods work in terms
+  of common statistical tools, for instance, regression analysis (and
+  that is about how complicated it becomes)
+
+- I would be really pleased if you understand what I say: Please
+  interrupt me and ask as soon as you get lost
+
+---
+# The Structure of These Lectures
+
+In the first part of lectures I describe four main basic ordination
+methods:
+
+- Principal Components Analysis (PCA) is just an extension of
+  regression analysis, and a simple summary of the data. I also
+  explain why it fails often with ecological community data.
+
+- Correspondence Analysis (CA) is a variant of PCA, but that small
+  difference makes it much better for community data.
+
+- In Principal Coordinates Analysis (PCoA) the main focus is what we
+  actually mean with things being similar, and how we can use
+  ecological judgement in defining similarity.
+
+- Nonmetric Multidimensional Scaling (NMDS) is presented as a flexible
+  and robust tool that often is most reliable in finding interpretable
+  results.
+
+- I also explain how to interpet ordination results with the help of
+  external information, such as measurements of chemical or physical
+  parameters and other environmental conditions
+
+---
+# The Structure of These Lectures
+
+In the latter part of lectures I describe how to use external
+environmental variables in constraining ordination. These are
+particularly useful if we have controlled experiment and we want to
+analyse the statistical significance of multivariate response. Even
+with survey data, the use of external variables can make
+interpretation much easier. Some of the main themes are:
+
+- How constrained ordination is defined as an extension of regression
+  analysis, and how they can be applied in the context of PCA, CA and
+  PCoA.
+
+- How we can test the statistical significance of external variables
+  in the multivariate setting.
+
+- How we can condition the analysis for some background variables and
+  remove their effects before main ordination.
+
+- How we can partition multivariate response to different sources
+  variation.
+
 <!-- ********** PCA ************** -->
 ---
 class: inverse center middle
