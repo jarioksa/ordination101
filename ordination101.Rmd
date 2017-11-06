@@ -330,7 +330,7 @@ panel.lm(PC1, df$Cladstel, pch=16, col = 2, col.smooth=4)
   previous one:
 
 - Species scores and SU scores are orthogonal to (uncorrelated with)
-  correspoding scores in the previous axes
+  corresponding scores in the previous axes
 
 - The second PC explains the largest possible amount of remaining
   variance
@@ -536,7 +536,7 @@ matplot(altfit, mtfit, type="l", lty=1, xlab="Altitude (m)", ylab="Species Respo
 .pull-left[
 
 - If species have nonlinear, unimodal response to gradients, the
-  gradient appears as a curve: **horseshoe artifact**
+  gradient appears as a curve: **horseshoe artefact**
 
 - People often want to interpret axes as latent variables, but even
   single gradient is not an axis: **Beware**
@@ -603,7 +603,7 @@ points(m3, dis="si", pch=16)
 - For this PCA should explain a large amount of variance
 
 - Use only the subset of correlated variables that may be assumed to
-  descrige the same underlying (latent) variable: **measurement
+  describe the same underlying (latent) variable: **measurement
   model**
 
 - Use correlations when variables are not measured in the same units
@@ -1064,7 +1064,7 @@ class: inverse center middle
 # PCoA: Principal Coordinates Analysis
 
 Principal Coordinates Analysis (PCoA) uses dissimilarities among SUs
-instead of rectangular data of SUs and variables. If dissamilarities
+instead of rectangular data of SUs and variables. If dissimilarities
 are Euclidean distances, then PCoA is equal to PCA. However, the
 method can be used with other dissimilarities, and often these are
 useful for community analysis. PCoA is also known as metric or classic
