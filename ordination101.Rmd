@@ -140,13 +140,13 @@ plot(ef, col=3, p.=0.05)
 - Ordination is **descriptive**, but it can help us to understand the
   main features of the data
 
-- Often ordination is *private*: we familiarize with the data so that
+- Often ordination is *private:* we familiarize with the data so that
   we can formulate research hypotheses, check the adequacy of our
   hypothesis, and communicate the results to other people
 
   - *Private:* we do it, but we do not tell anybody what we do in our privacy
 
-  - Ordination need not be published or shown to anyone to be useful
+  - Ordination need not be published or shown to anyone to be useful to you
 
 - Sometimes we can build rigorous tests on ordination results: these
   summarize the major structure and allow using simpler test
@@ -169,7 +169,7 @@ plot(ef, col=3, p.=0.05)
   about the **methods**
 
   - There are several alternative software implementations to perform
-    these analyses, althout the lecture slides were written using
+    these analyses, although the lecture slides were written using
     **R** statistical language and mainly with **vegan** package
 
   - There are no **R** commands in these slides, but if you *want* to
@@ -221,11 +221,11 @@ with survey data, the use of external variables can make
 interpretation much easier. Some of the main themes are:
 
 - How constrained ordination is defined as an extension of regression
-  analysis, and how they can be applied in the context of PCA, CA and
+  analysis, and how it can be applied in the context of PCA, CA and
   PCoA.
 
 - How we can test the statistical significance of external variables
-  in the multivariate setting.
+  in multivariate setting.
 
 - How we can condition the analysis for some background variables and
   remove their effects before main ordination.
@@ -249,7 +249,7 @@ is  linear, but  community  data are  nonlinear.
 - What is the best possible predictor variable for a species? --- It
   is the species itself!
 
-- Some species can also be strong in predicting the abundances of
+- Some species can also be powerful in predicting abundances of
   other species
 
 - The best possible predictor is such a (linear) combination of
@@ -373,7 +373,7 @@ panel.lm(PC1, df$Cladstel, pch=16, col = 2, col.smooth=4)
 
 - The coefficients together define the **direction** to which the
   species abundance **increases** most steeply &mdash; and it
-  **decreases** in the opposite direction
+  **decreases** to the opposite direction
 
 - The response is linear in 2D: the contours of linear trend surface are
   perpendicular to the arrow
@@ -404,8 +404,10 @@ tmp <- ordisurf(mod ~ Cladstel, df, add = TRUE, col=4, knots=1)
 - The further away from the origin SU is situated, the more strongly
   species abundances differ from the average
 
-- For species the angles between arrows indicate similar pattern of
-  change, and the length of the arrow the steepness of the change
+- For species the angles between arrows indicate the similarity of
+  change, and the length of the arrow the steepness of the change:
+  right angle means no relation, zero angle identical response, and
+  direct angle opposite responses
 
 - Try yourself: where these species are most abundant and scarcest?
   Which species attain highest abundances and where? Which species
@@ -518,7 +520,7 @@ class:  inverse center middle
 
 - PCA builds upon the idea of linear regression
 
-- PC axis are sometimes called as latent variables: unknown and hidden
+- PC axes are sometimes called as latent variables: unknown and hidden
   real variables that we dig up from data
 
 - Community response to environmental variables is non-linear: PC axes
@@ -535,10 +537,10 @@ matplot(altfit, mtfit, type="l", lty=1, xlab="Altitude (m)", ylab="Species Respo
 
 .pull-left[
 
-- If species have nonlinear, unimodal response to gradients, the
+- If species have nonlinear, unimodal responses to gradients, the
   gradient appears as a curve: **horseshoe artefact**
 
-- People often want to interpret axes as latent variables, but even
+- People often want to interpret axes as latent variables, but even a
   single gradient is not an axis: **Beware**
 
 - Even if you are aware of the risk of horseshoe, it can hide other
@@ -561,6 +563,7 @@ par(mar=c(4,4,1,1)+.1)
 plot(mod, dis="si", scaling="si", type="n")
 points(mod, dis="si", scaling="si", pch=16)
 ```
+PCA of the expected species response of previous slide
 ]
 ---
 # Horseshoe is Common
@@ -589,6 +592,9 @@ points(m3, dis="si", pch=16)
 
 - Horseshoe can hide underlying gradients and disperse their effect
   over several PCs so that they cannot be found and interpreted
+
+- Horseshoe can be expected also in homogeneous data with short
+  gradients
 
 ---
 # Niche for PCA
@@ -641,7 +647,7 @@ data, CA is usually a much better alternative than PCA.
 # Correspondence Analysis
 
 - In PCA we explain the differences of species from their averages
-  $y_{ij} - \bar y_j$ using mean squares (variance) as a measure
+  $y_{ij} - \bar y_j$ using thier mean squares (variance) as a measure
   of goodness of fit
 
 - In CA the expected value is derived both from SUs and species,
@@ -672,8 +678,8 @@ data, CA is usually a much better alternative than PCA.
 - CA is based on similar regression as PCA, but with
   $\chi$-standardized data and weights
 
-- Regression is linear, but *observed* values of data rather pack so
-  that high values are close to each other along the axis
+- Regression is linear, but *observed* values of data rather pack
+  together so that high values are close to each other along the axis
 
 - The response of species can be approximately unimodal: This matches
   the gradient model of species responses
@@ -701,7 +707,6 @@ for(k in 1:3) {
 }
 ```
 ]
-
 
 ---
 # PCA Orders Linearly, CA Packs
@@ -801,7 +806,7 @@ with(dune, tmp <- ordisurf(mod ~ Juncarti, bubble=2, family=quasipoisson, knots=
   $\lambda_k / \chi^2$ gives the proportion of inertia explained by the axis
 
 - This inertia is **not** variance but $\chi^2$, and eigenvalues or percentages
-  cannot be compared to PCA
+  cannot be compared with PCA
 
 - The eigenvalue is bound to be $\lambda \le 1$
 
@@ -830,7 +835,7 @@ text(mod, scaling="sites", dis="species", col=4, cex=0.8)
 ]
 
 ---
-# Weighted Averages and Packing
+# Weighted Averages and Scaling
 
 .pull-left[
 ```{r caspecwa}
@@ -958,8 +963,8 @@ ef$vectors
 
 .pull-left[
 
-- For one (and with tricks for two) factor we can show its value for
-  each point
+- For one factor we can show its value for each point (and with tricks
+  for two)
 
 - The mean location or the **centroid** can be shown for several factors
 
@@ -1077,8 +1082,8 @@ multidimensional scaling.
 
 - The same information can be extracted from distances among SUs
 
-- More precisely, they are known as Euclidean distances in the species
-  space
+- More precisely, these distances are known as Euclidean distances in
+  the species space
 
 - Why are they called **Euclidean**?
 
