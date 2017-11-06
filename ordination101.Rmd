@@ -36,6 +36,8 @@ library('mgcv')
 require('knitr')
 require('viridis')
 ```
+Source files of these slides are [in github](https://github.com/jarioksa/ordination101)
+
 <!-- ********** INTRO ************ -->
 <!-- ********** PCA ************** -->
 ---
