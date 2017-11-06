@@ -1,6 +1,6 @@
 ---
 title: "Basic Ordination Methods"
-subtitle: "Ordination 101 for Ecological Methods"
+subtitle: "Ordination for Ecological Methods"
 author: "Jari Oksanen"
 date: "Nov 8 to 15, 2017"
 output:
@@ -104,7 +104,7 @@ panel.lm(PC1, df$Cladstel, pch=16, col = 2, col.smooth=4)
 - PCA explains the **variance** of the data: the squared
   differences between observed values $y$ and species means $\bar y$:
   $\mathrm{Var}(y_j) = \sum_{i=1}^N(y_{ij} - \bar y_j)^2/(N-1)$
-  - NB., ordination always uses centred data so that $\bar y = 0$
+  - NB., ordination always centres data so that $\bar y = 0$
 
 - In the example, the variances of three species were
   `r round(apply(bott0, 2, var), 1)`, with sum
@@ -120,7 +120,7 @@ panel.lm(PC1, df$Cladstel, pch=16, col = 2, col.smooth=4)
   the **species scores** used in ordination diagrams, and they are also
   regression coefficients that project centred species abundances to
   the PC
-  - NB., ordination always uses centred data so that intercept
+  - NB., ordination always centres data so that the intercept
   is zero
 
 - The result of this projection are the sampling unit **(SU) scores**
@@ -141,8 +141,8 @@ panel.lm(PC1, df$Cladstel, pch=16, col = 2, col.smooth=4)
   - In the example, its eigenvalue is $\lambda_2 =$ `r round(mod$CA$eig[2], 1)`
     which is  `r round(100*mod$CA$eig[2]/mod$tot.chi, 1)`% of total variance
 
-- The sum of all $R$ eigenvalues is equal to the variances of all
-   species $\sum_{r=1}^R \lambda_r = \sum_{j=1}^S \mathrm{Var}(y_j)$:
+- The sum of all $K$ eigenvalues is equal to the variances of all
+   species $\sum_{k=1}^K \lambda_k = \sum_{j=1}^S \mathrm{Var}(y_j)$:
    The axes decompose variance into independent ordered components
 
 - In modern software, we do not find second and further PCs one-by-one
@@ -152,16 +152,16 @@ panel.lm(PC1, df$Cladstel, pch=16, col = 2, col.smooth=4)
 ---
 # Is This Circular?
 
-- We explain species by species &mdash; and this sound badly circular
+- We explain species by species &mdash; and this sounds badly circular
 
 - We perform no statistical testing, and what looks regression
   actually is **rotation** of species data
 
 - We only like to find a way of looking at the data so that some first
-  (say PC1 and PC2) so as much of the variance of the data as possible
+  (say PC1 and PC2) show as much of the variance of the data as possible
 
 - Then we can ignore the later axes and say that a **major part** of
-  variation in the data is displayed in the first dimensions that we
+  variation is displayed in the first dimensions that we
   can graph
 
 - PCA is **not** a statistical method, but it is only a rotation of
@@ -288,18 +288,18 @@ ordilabel(cbind(colMeans(varespec), v), priority = v, fill = "yellow")
 
 .pull-left[
 
-- Use correlation instead of variance and minimize residual $1-R^2$:
-  This gives equal weights to all species
+- Use correlation instead of variance and minimize residuals $1-R^2$ in
+  PC regression: This gives equal weights to all species
 
 - Equalized data are more multidimensional, and scarce species will
-  also influence the result, and they change from the previous
+  also influence the result, and the ordination changes from the previous
 
 - PCA implies that species effects should be shown by arrows, but this
   makes graphs very messy, and often it makes sense to drop arrows and
   just show the species scores at arrowheads
 
-- They still should be interpreted like arrows: Distance and direction
-  from the origin counts
+- They still should be interpreted like arrows: **Distance** and
+  **direction** from the origin counts
 
 ]
 
@@ -320,7 +320,7 @@ class:  inverse center middle
 ---
 # Linear Method
 
-- PCA builds upon idea of linear regression
+- PCA builds upon the idea of linear regression
 
 - PC axis are sometimes called as latent variables: unknown and hidden
   real variables that we dig up from data
@@ -346,7 +346,7 @@ matplot(altfit, mtfit, type="l", lty=1, xlab="Altitude (m)", ylab="Species Respo
   single gradient is not an axis: **Beware**
 
 - Even if you are aware of the risk of horseshoe, it can hide other
-  shorter gradients: using two dimensions for one gradient is wasteful
+  shorter gradients: Using two dimensions for one gradient is wasteful
   and confusing
 
 - In general, PCA **should not be used** for community data
@@ -400,7 +400,9 @@ points(m3, dis="si", pch=16)
 .pull-left[
 
 - New synthetic variables from correlated measurements to avoid
-  problems of collinearity
+  problems of collinearity in statistical analysis
+
+  - Using PCs as explanatory variables in regression
 
 - For this PCA should explain a large amount of variance
 
@@ -423,7 +425,9 @@ palette(viridis(8))
 par(mar=c(4,4,1,1)+.1)
 biplot(mod, display="sp", col=1)
 ```
-
+.small[
+Soil data for reindeer pastures
+]
 ]
 
 <!-- ********* CA ************ -->
@@ -440,11 +444,11 @@ data, CA is usually a much better alternative than PCA.
 ---
 # Correspondence Analysis
 
-- In PCA we explain the differences of species from their average
-  $y_{ij} - \bar y_j$, using its mean square (variance) as a measure
+- In PCA we explain the differences of species from their averages
+  $y_{ij} - \bar y_j$ using mean squares (variance) as a measure
   of goodness of fit
 
-- In CA the expected value is derived both from the SU and species,
+- In CA the expected value is derived both from SUs and species,
   and the goodness of fit is $\chi^2$
 
 - We first scale the observed data so that their sum is one
@@ -458,14 +462,14 @@ data, CA is usually a much better alternative than PCA.
 
 - We look at proportional difference
   $(y_{ij} - r_i c_j)/\sqrt{r_i c_j}$, and its square is
-  $\chi^2 = (y_{ij} - r_i c_j)^2/(r_i c_j)$:
+  $\chi^2 = \sum_i \sum_j (y_{ij} - r_i c_j)^2/(r_i c_j)$:
   This takes the place of variance of PCA
 
 - Then we proceed with regression to find the axes, just like in PCA
   (except that we need to use weights $\sqrt{r_i}$, $\sqrt{c_j}$)
 
 ---
-# Small but Important Difference
+# Small But Important Difference
 
 .pull-left[
 
@@ -475,7 +479,7 @@ data, CA is usually a much better alternative than PCA.
 - Regression is linear, but *observed* values of data rather pack so
   that high values are close to each other along the axis
 
-- The response of species can be approximately unimodal: this matches
+- The response of species can be approximately unimodal: This matches
   the gradient model of species responses
 
 - The solution can be better related to environmental variables than in PCA
@@ -510,14 +514,14 @@ for(k in 1:3) {
 ```{r pcatabasco}
 tabasco(varespec, rda(varespec), scale="log", col=viridis(10))
 ```
-**PCA**
+**PCA:** Rows and columns ordered by PC1
 ]
 
 .pull-right[
 ```{r catabasco, }
 tabasco(varespec, cca(varespec), scale="log", col=viridis(10))
 ```
-**CA**
+**CA:** Rows and columns ordered by CA1
 ]
 
 ---
@@ -550,10 +554,10 @@ palette(viridis(8))
 m0 <- rda(abernethy[,1:36])
 m1 <- cca(abernethy[,1:36])
 plot(m0, dis="si", scaling="si", type="n")
-lines(scores(m0, dis="si", scaling="si"), col=7)
+ordiarrows(m0, rep("a", nrow(abernethy)), scaling="si", col=7)
 points(m0, dis="si", scaling="si", pch=16, col=1)
 plot(m1, dis="si", scaling="si", type="n")
-lines(scores(m1, dis="si", scaling="si"), col=7)
+ordiarrows(m1, rep("a", nrow(abernethy)), scaling="si", col=7)
 points(m1, dis="si", scaling="si", pch=16, col=1)
 ```
 .pull-right[
@@ -603,11 +607,13 @@ with(dune, tmp <- ordisurf(mod ~ Juncarti, bubble=2, family=quasipoisson, knots=
 - This inertia is **not** variance but $\chi^2$, and eigenvalues or percentages
   cannot be compared to PCA
 
+- The eigenvalue is bound to be $\lambda \le 1$
+
 - High eigenvalue is good, but too high (say, $\lambda > 0.7$) are
   suspicious: disjunct or partly disjunct data where a group of SUs
   shares hardly anything (or nothing) with others
 
-- Species scores can be seen as points indication species optimum
+- Species scores can be seen as points indicating species optima
   instead of arrows of increase in PCA
 
 - Both species and SU scores are **weighted averages** of each other
@@ -664,7 +670,7 @@ class: inverse center middle
 
 Gradient model is the deep idea of ordination: If sampling units are
 close to each other in ordination, they occur in similar environments,
-and if they are far away in ordiation, the environments differ. If our
+and if they are far away in ordination, the environments differ. If our
 ordination model is such that it can be assumed to be consistent with
 gradient model (*i.e.*, it is able to handle unimodal species
 responses), we can try to identify the underlying environmental
@@ -676,7 +682,9 @@ variables that cause the ordination structure.
 .pull-left[
 
 - Most popular method of displaying continuous variables
+
 - Can show many variables in one graph
+
 - Implies a **linear trend** surface, similarly as species arrows in PCA
 
 - **Direction** shows the steepest change in variable: the direction
@@ -685,7 +693,7 @@ variables that cause the ordination structure.
 
 - **Length** shows the relative importance or the strength of the variable
 
-- The arrows is drawn from the origin and shows the direction of
+- The arrow is drawn from the origin and shows the direction of
   increase: there is equally strong **decrease to opposite** direction
 
 ]
@@ -700,6 +708,7 @@ points(vmod, pch=21, col=1, bg=4)
 ef <- envfit(vmod ~ ., varechem)
 plot(ef, col=1, bg=8)
 ```
+Reindeer Pastures and Soil data
 ]
 ---
 # Linear Trend Surface: Is it Adequate?
@@ -726,10 +735,10 @@ plot(envfit(vmod ~ N, varechem), col=1, bg=8)
 .pull-left[
 
 - The strength of the fitted vector is given by the correlation $r$
-  (or its square $r^2$) to the direction of the coordinates
+  (or its square $r^2$) to the direction of the coordinates of the arrow head
 
 - **Permutation tests:** Rows of environmental variables are shuffled
-    into random order and $r^2$ is calculated
+    into random order and $r^2$ is re-calculated
 
 - The $P$-value is the probability that $r^2$ of random permutation is
   larger or equal to the observed value of fitted vector
@@ -742,11 +751,11 @@ plot(envfit(vmod ~ N, varechem), col=1, bg=8)
 
 ]
 
-.pull-right[
+.small[.pull-right[
 ```{r echo=FALSE, results=TRUE}
 ef$vectors
 ```
-]
+]]
 
 ---
 # Categorical Variables (Factors)
@@ -808,15 +817,17 @@ with(dune.env, points(mod, dis="si", pch=21, bg=viridis(4)[as.numeric(Management
 # Significance Tests for Factors
 
 .pull-left[
+.small[
 ```{r echo=FALSE, results=TRUE}
 eff$factors
 ```
+]
 
 - **Confidence ellipse** is derived from Standard Error ellipse and
     shows the likely location of the centroid
     - SD ellipse shows the dispersion of points
 
-- If confidence ellipses do not overlap, they are approximately $\pm$
+- If confidence ellipses do not overlap, they are approximately
   different at the given level
 
 ]
@@ -845,7 +856,7 @@ with(dune.env, points(mod, dis="si", pch=21, bg=viridis(4)[as.numeric(Management
 - You should interpret the directions of the gradients (and the arrow
   points to the steepest gradient) instead of axes
 
-- You should **never** **interpret** **axes**, but direction in the
+- You should **never** **interpret** **axes**, but directions in the
   ordination space
 
 - Significance tests can help in interpretation of results, but they
@@ -873,7 +884,7 @@ multidimensional scaling.
 - More precisely, they are known as Euclidean distances in the species
   space
 
-- Why is it called **Euclidean**?
+- Why are they called **Euclidean**?
 
 - In species space, SUs are points on species axes that are at right
   angle to each others. The *difference* of species $j$ abundance for two
@@ -918,7 +929,7 @@ multidimensional scaling.
       
     - Some dissimilarity measures combine both points: Bray-Curtis
       dissimilarity is based on absolute differences and is scaled to
-      maximum value $1$:
+      maximum value of one:
       $d_{ik} = \frac{\sum_j |y_{ij}-y_{kj}|}{\sum_j (y_{ij}+y_{kj})}$
 
 - **Research interest dictates** to use a specific non-Euclidean
@@ -928,9 +939,9 @@ multidimensional scaling.
 
 .pull-left[
 
-- We want to use Whittaker's beta diversity
+- We want to study Whittaker's beta diversity
   $\beta = \gamma/\bar \alpha -1$, where $\gamma$ is the number of species in
-  pooled communities, and $\bar \alpha$ is the mean number of species in
+  pooled communities, and $\bar \alpha$ is the average number of species in
   communities
 
 - For two communities of $A$ and $B$ species with $J$ shared species, we have
@@ -951,6 +962,7 @@ d <- designdist(varespec, "(A+B-2*J)/(A+B)", "binary")
 dmod <- dbrda(d ~ 1)
 plot(dmod)
 ```
+Reindeer Pastures
 ]
 ---
 # Example 2: Phylogenetic Distance
@@ -962,12 +974,12 @@ plot(dmod)
 - If species are related, they would not contribute a full independent
   species to the dissimilarities
 
-- Here we use the squareroot of Rao distance which is one of many
-  phylogenetic dissimilarity indices (and they can equally well be
-  used for related functional traits etc.)
+- Here we use Rao distance which is one of many phylogenetic
+  dissimilarity indices (and they can equally well be used for related
+  functional traits etc.)
 
-- If species have diverged more than 65 Myr ago, they are regarded as
-  completely independent
+- We put a limit: If species have diverged more than 65 Myr ago, they
+  are regarded as completely independent
 
 - PCoA is distance-based, and has no information on species, but these
   can be projected to the ordination afterwards similarly as species
@@ -981,8 +993,8 @@ palette(viridis(8))
 par(mar=c(4,4,1,1)+.1)
 plot(hclust(dune.phylodis), hang=-1, ylab="Time (Myr)", main="", sub="", xlab="")
 abline(h=65, col=4)
-
 ```
+Dutch Dune Meadows, Data for Tree: Zanne *et al* (2014), *Nature* **506,** 89&mdash;92.
 ]
 ---
 # Example 2: Phylogenetic distance
@@ -996,8 +1008,7 @@ text(pl, "sites", pch=21, col=1, bg=1)
 text(pl, "species", col=3, cex=0.7)
 ordispider(m0, dune.taxon$Family, display="species", label=TRUE, col=3, cex=0.8)
 d <- distrao(dune, dune.phylodis, dmax=65)
-d <- sqrt(2*d) # raodist is 0.5*squared-Euclidean
-md <- dbrda(d ~ 1)
+md <- dbrda(d ~ 1, sqrt.dist = TRUE)
 sppscores(md) <- dune
 pl <- plot(md, type="n")
 text(pl, "sites", pch=21, col=1, bg=1)
@@ -1011,7 +1022,7 @@ class: inverse center middle
 
 PCA, CA & PCoA are eigenvector methods. They map community
 dissimilarities linearly so that with the maximum number of dimensions
-the dissimilarities are exactly represented, but some first dimensions
+the dissimilarities are exactly reproduced, but some first dimensions
 show as much as possible of the dissimilarities. NMDS is completely
 different: it maps dissimilarities non-linearly onto low-dimensional
 ordination. It assumes very little of data or response models and is
@@ -1023,6 +1034,7 @@ parametric mapping.
 .pull-left[
 
 - Eigenvector methods *decompose* observed dissimilarities
+
 - With all possible axes, they reproduce exactly observed dissimilarities
 - First axes show the largest possible amount of observed dissimilarities
 
@@ -1060,8 +1072,8 @@ Oribatid mites: 2-dim CA of $\chi$-distances
     dissimilarities
     - The **ordination space** is metric, but the **regression** is non-metric
 
-- Rank-order similar: if *observed dissimilarity* $d_a < d_b$ then
-  Euclidean *ordination distance* $\delta_a < \delta_b$
+- Rank-order similar: if *observed dissimilarity* $d_{a} < d_{b}$ then
+  Euclidean *ordination distance* $\delta_{a} < \delta_{b}$
   
 - The rank orders of observed dissimilarities cannot be exactly
   preserved by rank-orders of ordination distances in low-dimensional
@@ -1125,7 +1137,7 @@ stressplot(mmod, l.col=2, p.col=6)
     has **no** special meaning in NMDS
 
     - It is convenient to rotate NMDS space so that the first axis
-      shows the major variation in the *ordination*, but it means
+      shows the major variation of the *ordination*, but it means
       nothing: All that means is the configuration of points and
       distances between points &mdash; and these do not depend on the
       directions of the axes
@@ -1135,7 +1147,7 @@ stressplot(mmod, l.col=2, p.col=6)
       environmental variables or any other direction
 
 - What is in common is that NMDS and Eigenvector methods (PCA, CA, PCoA)
-  have metric ordination space that can be interpreted in the same way
+  have **metric ordination space** that can be interpreted in the same way
   for the configuration of points and using environmental variables
 ---
 # These NMDS Ordinations are Identical
@@ -1155,7 +1167,7 @@ plot(envfit(mrot ~ SubsDens + WatrCont + Shrub, mite.env), col=3, bg=8, xpd=TRUE
 
 ```
 ---
-## Abernethy: Dissimilarity & Mapping
+## Example: Abernethy Pollen Profile
 
 ```{r abergrid, fig.width=8,fig.height=5.5, results=FALSE}
 palette(viridis(8))
@@ -1207,13 +1219,13 @@ stressplot(m4, l.col=2, p.col=6, main="NMDS: Bray-Curtis / Wisconsin")
 
 - There is a cycle in SU sequence in the oldest times. Species scores
   indicate that the cycle is *Rumex* &mdash; *Anthyllis vulneraria*
-  &mdash; Graminoids &mdash; *Artemisia* and then going to the linera
+  &mdash; Graminoids &mdash; *Artemisia* and then going to the linear
   succession *Juniperus communis* &mdash; *Betula* &mdash; *Pinus
   sylvestris* &mdash; *Alnus glutinosa*
 
 - This looks like a credible cycle of pioneer communities (*Rumex*)
-  and tundra steppes (*Artemisia*) before going to regular forest
-  succession
+  and tundra steppes (*Artemisia*) before going to secular heath and
+  forest succession
 
 - All other methods had a curve that hid the pioneer cycle
 
