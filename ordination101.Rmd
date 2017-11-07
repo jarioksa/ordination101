@@ -28,6 +28,7 @@ if (packageVersion('vegan') < '2.5.0')
 data('varespec', 'varechem', 'mite', 'mite.env', 'dune', 'dune.env')
 data('dune.phylodis','dune.taxon')
 require('natto') # in github, natto::raodist()
+require('vegan3d')
 require('labdsv')
 data('bryceveg')
 require(analogue)
@@ -425,7 +426,30 @@ biplot(mod, col=c(4,1))
 ---
 # Rotation in Species Space
 
-### [Please Click Me!](http://cc.oulu.fi/~jarioksa/opetus/metodi/3D/PCArotation/index.html)
+.pull-left[
+
+- In species space every species is an axis
+
+- Each axis is at right angle against all other axes
+
+- The SUs are points, and the abundance of each species gives its location
+  in species axes
+
+- There can be a huge number of species axes, and we cannot see them all
+
+- We rotate the species space so that we see as much as possible from the 
+  locations of the points: This is the **PCA!**
+
+]
+
+.pull-right[
+```{r specspace}
+palette(viridis(8))
+ordiplot3d(bott0, mar=c(4,4,0,2), angle=20, pch=16, col=2, ax.col=4)
+```
+[Please Click Me!](http://cc.oulu.fi/~jarioksa/opetus/metodi/3D/PCArotation/index.html)
+
+]
 ---
 # Complete Reindeer Pasture Data
 
