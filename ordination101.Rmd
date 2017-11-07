@@ -108,7 +108,6 @@ plot(ef, col=3, p.=0.05)
 
 - If two species are close to each other, they have similar occurrence
   patterns, and occur most abundantly in SUs that are close to them
-- And vice versa for two species far away from each other
 
 - It can be assumed that environmental conditions are behind these
   differences and we can identify the external variables that explain
@@ -765,7 +764,7 @@ points(m1, dis="si", scaling="si", pch=16, col=1)
 Abernethy Forest pollen data (5515 to 12145 BP)
 ]
 ---
-# Unimodal Responses in Multidimensions
+# Unimodal Responses in 2D
 
 .pull-left[
 - CA packs species also in multidimensional space
@@ -846,7 +845,7 @@ text(mod, dis="sp", cex=0.6, col=3)
 with(dune, ordispider(mod, Lolipere>0, w=Lolipere, label=FALSE, show=TRUE, col=4))
  with(dune, plot(envfit(mod ~ rep("A",nrow(dune)), w=Lolipere), labels="Lolipere", bg=8))
 ```
-**Dots:** SUs, *size:* abundance of *Lolium perenne*, **Text:** species
+**Dots:** SUs, size: *Lolium perenne*, **Text:** species
 ]
 
 .pull-right[
@@ -860,7 +859,7 @@ cl[18] <- palette()[8]
 ordilabel(mod, dis="si", cex=0.7, scaling="si", fill=cl)
 points(mod, scaling="si", display="sp", cex=unlist(dune[18,]/2+0.4), pch=21, bg=4, col=1)
 ```
-**Text:** SUs, **Dots:** species, *size:* abundance in SU 18
+**Text:** SUs, **Dots:** species, size: abundance in SU 18
 
 ]
 
@@ -878,7 +877,7 @@ responses), we can try to identify the underlying environmental
 variables that cause the ordination structure.
 
 ---
-# Fitted Vectors
+## Fitted Vectors
 
 .pull-left[
 
@@ -995,7 +994,7 @@ legend("topright", levels(dune.env$Management), pch=21, pt.bg=viridis(4), title 
 ```
 ]
 ---
-# Displaying Factors
+## Displaying Factors
 
 ```{r factorshow, fig.width=8, fig.height=5.6}
 par(mar=c(3,4,1,1)+.1, mfrow=c(2,2))
@@ -1107,7 +1106,7 @@ multidimensional scaling.
   Euclidean distances of transformed data
 
 ---
-# What is Wrong with Euclidean Distances?
+## What is Wrong with Euclidean Distances?
 
 - **They have no fixed upper limit,** but distances can vary among SUs
     that have nothing in common, and communities with high abundances
@@ -1195,7 +1194,7 @@ par(mar=c(4,4,1,1)+.1)
 plot(hclust(dune.phylodis), hang=-1, ylab="Time (Myr)", main="", sub="", xlab="")
 abline(h=65, col=4)
 ```
-Dutch Dune Meadows, Data for Tree: Zanne *et al* (2014), *Nature* **506,** 89&mdash;92.
+Data for Tree: Zanne *et al* (2014), *Nature* **506,** 89&mdash;92.
 ]
 ---
 # Example 2: Phylogenetic distance
@@ -1262,10 +1261,9 @@ Oribatid mites: 2-dim CA of $\chi$-distances
 ]
 
 ---
-# NMDS: Monotone Mapping
+## NMDS: Monotone Mapping
 
 .pull-left[
-
 - NMDS maps dissimilarities non-linearly onto low-dimensional ordination
 
 - **Monotone regression**: Euclidean distances of points in the
@@ -1286,7 +1284,6 @@ Oribatid mites: 2-dim CA of $\chi$-distances
 ]
 
 .pull-right[
-
 ```{r}
 par(mar=c(4,4,1,1)+.1)
 palette(viridis(8))
@@ -1297,7 +1294,7 @@ stressplot(mmod, l.col=2, p.col=6)
 
 ]
 ---
-# Stress and Iterations
+## Stress and Iterations
 
 $$\mathrm{stress} = \frac{\sum_{i \ne j}(\mathrm{monotone}(d_{ij})-\delta_{ij})^2}{\sum_{i \ne j}\delta_{ij}^2}\;,$$
 where $d$ are the calculated dissimilarities between SUs $i$ and $j$,
@@ -1305,7 +1302,7 @@ $\mathrm{monotone}()$ is their monotone regression fit, and $\delta$ are the
 Euclidean distances between points in the ordination
 
 - In other words: stress is the spread of points with respect to
-  monotone regression when SUs are put on the ordination
+  monotone regression
 
 - The ordination space is *metric* and Euclidean: the *non-metric*
   refers only to the regression used to transform observed
