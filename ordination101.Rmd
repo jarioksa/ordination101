@@ -555,6 +555,7 @@ palette(viridis(6))
 par(mar=c(4,4,1,1)+.1)
 matplot(altfit, mtfit, type="l", lty=1, xlab="Altitude (m)", ylab="Species Response")
 ```
+Mt Field (Tasmania): Fitted Responses
 ---
 # Horseshoe: Beware!
 
@@ -584,9 +585,9 @@ mod <- rda(mtfit)
 palette(viridis(8))
 par(mar=c(4,4,1,1)+.1)
 plot(mod, dis="si", scaling="si", type="n")
-points(mod, dis="si", scaling="si", pch=16)
+points(mod, dis="si", scaling="si", pch=16, col=2)
 ```
-PCA of the expected species response of previous slide
+PCA of the expected species responses of previous slide
 ]
 ---
 # Horseshoe is Common
