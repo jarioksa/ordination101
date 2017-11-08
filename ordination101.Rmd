@@ -887,7 +887,41 @@ points(mod, scaling="si", display="sp", cex=unlist(dune[18,]/2+0.4), pch=21, bg=
 **Text:** SUs, **Dots:** species, size: abundance in SU 18
 
 ]
+---
+# Rare Species
 
+.pull-left[
+
+- Rare species are often extreme in CA
+
+- CA explains deviation from expected abundance, and it expects every
+  species occur at every SU &mdash; rare species occur only in one or
+  two
+
+- CA assesses deviation as proportional to expected &mdash; rare
+  species have low expected values and look extreme
+
+- CA is weighted, and rare species have low weights &mdash; they do
+  not influence ordination of SUs or other species very much
+
+- Some people tell you to routinely remove rare species from the data,
+  but I do not recommed doing so
+
+]
+
+.pull-right[
+```{r carare}
+par(mar=c(4,4,0,1)+.1)
+cl <- rev(viridis(5))
+fr <- colSums(bryceveg > 0)
+fr <-  cut(fr, breaks=c(0,1,3,7,15,100))
+bmod <- cca(bryceveg)
+plot(bmod, dis="sp", type="n")
+points(bmod, dis="sp", pch=21, bg=cl[fr])
+legend("topleft", c(" 1"," 2 - 3"," 4 - 7"," 8 - 15","16 - 87"), pch=21, pt.bg=cl, title="Species Frequency")
+```
+Bryce Canyon, species scores
+]
 ---
 class: inverse center middle
 
