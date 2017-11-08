@@ -47,6 +47,20 @@ This version was built on `r date()`
 
 <!-- ********** INTRO ************ -->
 ---
+# This Is Ordination
+
+.center[
+```{r whatisthis, fig.height=5.3}
+par(mar=c(4,4,0,0)+.1)
+palette(viridis(8))
+foo <- cca(varespec ~ Al + P + K, varechem)
+plot(foo, type="n")
+points(foo, dis="si", pch=21, col=2, bg=6)
+ordilabel(foo, dis="sp", col=4, cex=.8, priority=colSums(varespec))
+text(foo, dis="cn", col=2, cex=1.6, lwd=2)
+```
+]
+---
 class: inverse center middle
 
 # Ordination: Why and What?
