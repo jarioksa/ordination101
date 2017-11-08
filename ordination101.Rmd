@@ -278,7 +278,7 @@ is  linear, but  community  data are  nonlinear.
 ```{r bottpredict, fig.width=8, fig.height=5.5}
 bott <- varespec[, c("Pleuschr","Cladrang","Cladstel")]
 bott0 <- scale(bott, scale = FALSE)
-par(mar=c(4,4,1,1)+.1)
+par(mar=c(4,4,0,1)+.1)
 palette(viridis(8))
 panel.lm <- function(x, y, col.smooth = 1, ...)
 {
@@ -1546,6 +1546,154 @@ ordilabel(pl, dis="sp", cex=0.7, labels=make.cepnames(colnames(x)), priority=col
 ```
 
 ]
+
+---
+class: inverse center middle
+
+# Constrained Ordination
+
+Constrained ordination is also known as canonical ordination. In
+unconstrained ordination we used only community data to find its main
+structure, and interpreted the results via fitting environmental
+variables to the ordination. In constrained ordination we derive the
+result directly through environmental variables (constraints) and find
+only that structure in the communities that can be explained with
+constraints. The results explain a smaller propotion of total
+variation than unconstrained ordination, but they are more strongly
+interpretable with the constraints. Constrained ordination is allows
+for statistical testing of the constraints, and it is most useful in
+the analysis of designed experiments.
+
+---
+# Constrained Ordination
+
+- In *unconstrained* ordination (PCA, CA, PCoA) we explained species
+  with species and found the best possible linear predictors of
+  observed values
+
+- In *constrained* ordination we explain species with external
+  variables (such as environement)
+
+- This gives poorer results than unconstrained ordination, but more
+  easily interpretable because we constrain the results with
+  variabales we use in interpretation
+
+- In unconstrained ordination we first find the ordination as well as
+  possible and then see how it can be explained
+
+- In constrained ordinatin we build the ordination so that it can be
+  explained as well as possible
+
+---
+# From Regression to Constrained Ordination
+
+- In unconstrained ordination we found the *linear combination* of
+  species that best explains all species
+
+- Now we find the *linear combination* of **constraints** that best
+  explains all species
+
+- These two alternative strategies lead to the same result:
+
+.pull-left[
+
+- Use the linear combination of constraints as the explonatory
+  variable, and find such a linear combination that has smallest
+  residual variation for all species
+
+- We use the same linear combination for all species and that is the
+  first constrained ordination axis
+
+- This directly gives *regression coefficients* for environmental
+  variables and the first constrained axis
+
+]
+
+.pull-right[
+
+- Fit a linear regression separately for all species using all
+  constraints as explanatory variables
+
+- Each species has different regression models
+
+- Ordinate the fitted values of species as in unconstrained ordination
+
+- This directly gives *species scores* and the first constrained axis
+
+]
+
+---
+# Method 1: LC of Constraints
+
+```{r rdamethod1, fig.width=11}
+par(mar=c(4,4,1,1)+.1, mfrow=c(1,3))
+palette(viridis(8))
+cmod <- rda(bott0 ~Al + P, varechem)
+rda1 <- cmod$CCA$u[,1]
+koef <- coef(cmod)[,1]
+koef <- paste(formatC(koef, digits=3, flag="+"), names(koef), sep="*", collapse="")
+ylim <- range(bott0)
+for(i in 1:3) {
+   plot(rda1, bott0[,i], ylim=ylim, xlab=koef, ylab=colnames(bott0)[i], type="n", cex.lab=1.5)
+   panel.lm(rda1, bott0[,i], pch=16, col=2, col.smooth=4)
+}
+```
+
+---
+# Method 2: Ordination of Fitted Values
+
+```{r rdamethod2a, fig.width=8, fig.height=5.5}
+par(mar=c(4,4,0,1)+.1)
+palette(viridis(8))
+pairs(fitted(cmod), pch=16, col=4, ylim=range(fitted(cmod)), panel=panel.lm)
+```
+
+---
+# Method 2: Ordination of Fitted Values
+
+```{r rdamethod2b, fig.width=11}
+par(mar=c(4,4,1,1)+.1, mfrow=c(1,3))
+palette(viridis(8))
+rda1 <- cmod$CCA$u[,1]
+koef <- cmod$CCA$v[,1]
+koef <- paste(formatC(koef, digits=2, flag="+"), names(koef), sep="*", collapse="")
+fv <- fitted(cmod)
+ylim <- range(fv)
+for(i in 1:3) {
+   plot(rda1, fv[,i], ylim=ylim, xlab=koef, ylab=colnames(fv)[i], type="n", cex.lab=1.5)
+   panel.lm(rda1, fv[,i], pch=16, col=2, col.smooth=4)
+}
+```
+---
+# What Was Explained?
+
+- **Method 1** explained *total* variance
+
+  - It was `r round(cmod$tot.chi, 1)`, the first axis explained
+    $\lambda_1=$ `r round(cmod$CCA$eig[1], 1)`, and all constrained
+    axes explained $\Lambda_k=$ `r round(cmod$CCA$tot.chi, 1)`
+
+- **Method 2** explained the variance of *fitted values*
+
+  - It was $\Lambda_k=$ `r round(cmod$CCA$tot.chi, 1)`, and the first
+    axis explained $\lambda_1=$ `r round(cmod$CCA$eig[1], 1)`
+
+- We had two constraints (Al & P) and therefore we had two constrained
+  axes: the **rank** of constraints was 2
+
+- Both methods gave the same two constrained axes and the same
+  eigevalues (explained variance)
+
+- The sum of first two eigenvalues was
+  `r round(sum(rda(bott0)$CA$eig[1:2]), 1)` which is more than
+  constrained $\Lambda_k$
+
+- Unconstrained PC axes are the best possible linear predictors and
+  anything else must be worse
+
+- Constrained ordination should have *clearly* lower eigenvalues than
+  unconstrained &mdash; or constraints did not have any effect!
+
 
 ---
 class: inverse center middle
