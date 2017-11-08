@@ -43,6 +43,8 @@ Source files of these slides are [in github](https://github.com/jarioksa/ordinat
 
 © Jari Oksanen 2017
 
+This version was built on `r date()`
+
 <!-- ********** INTRO ************ -->
 ---
 class: inverse center middle
@@ -1529,4 +1531,19 @@ ordiarrows(pl, rep("a",nrow(abernethy)), col=7)
 ordilabel(pl, dis="sp", cex=0.7, labels=make.cepnames(colnames(x)), priority=colSums(x), col=3)
 ```
 
+]
+
+---
+class: inverse center middle
+
+# The End
+--
+
+## Thank You
+
+---
+.small[
+```{r end, echo=FALSE}
+sessionInfo()
+``` 
 ]
