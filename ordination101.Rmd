@@ -1507,7 +1507,7 @@ points(pl, "sites", pch=16, col=2)
 ## Stress Plot Indicates NMDS Does Best
 
 ```{r aberstress, fig.width=8,fig.height=5.5, results=FALSE}
-par(mar=c(4,4,0.6,1)+.1, mfrow=c(2,2))
+par(mar=c(4,4,0.7,1)+.1, mfrow=c(2,2))
 palette(viridis(8))
 stressplot(m1, l.col=2, p.col="white",bg=6,pch=21, main="PCA: Hellinger")
 stressplot(m2, l.col=2, p.col="white",bg=6,pch=21, main="CA: Chi")
