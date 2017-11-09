@@ -1581,24 +1581,23 @@ the analysis of designed experiments.
   easily interpretable because we constrain the results with
   variabales we use in interpretation
 
-- In unconstrained ordination we first find the ordination as well as
-  possible and then see how it can be explained
+- In unconstrained ordination we first find the ordination and then
+  see how it can be explained
 
 - In constrained ordinatin we build the ordination so that it can be
-  explained as well as possible
+  explained with the environmental variables (constraints)
 
 ---
 # From Regression to Constrained Ordination
 
-- In unconstrained ordination we found the *linear combination* of
-  species that best explains all species
-
-- Now we find the *linear combination* of **constraints** that best
-  explains all species
+- Constrained Ordination: Find the *linear combination* of
+  **constraints** that best explains all species
 
 - These two alternative strategies lead to the same result:
 
 .pull-left[
+
+**Method 1**
 
 - Use the linear combination of constraints as the explonatory
   variable, and find such a linear combination that has smallest
@@ -1613,6 +1612,8 @@ the analysis of designed experiments.
 ]
 
 .pull-right[
+
+**Method 2**
 
 - Fit a linear regression separately for all species using all
   constraints as explanatory variables
@@ -1697,6 +1698,149 @@ for(i in 1:3) {
 - Constrained ordination should have *clearly* lower eigenvalues than
   unconstrained &mdash; or constraints did not have any effect!
 
+---
+# The Scores
+
+- **Species scores**
+
+  - These are also regression coefficients that derive the constrained
+    axis from species data
+
+- Two kind of **SU scores**
+
+  - **Linear combination (LC) scores** which are the linear
+      combinations of *constraints*
+
+  - Together with the species scores, the LC scores find the *fitted*
+    values of each species (of method 2)
+
+  - **Weighted Averages (WA) scores** which are derived from the
+      species scores and observed values of the input community
+
+  - Together with the species scores, the WA scores estimate the
+    *observed* values of each species
+
+- **Biplot scores** for constraints
+
+  - These are correlations with the constraints and the LC scores for SUs
+
+  - They are found separately for each constraining variable, and
+    other constraining variables do not influence their values
+
+---
+# Interpretation of Biplot Scores
+
+.pull-left[
+
+- LC scores really are linear combinations of constraints, and when
+  projected to biplot arrows, they fall on the values of constraints
+
+- When WA scores are projected onto biplot arrows, they give the
+  prediction of environmental conditions from species data:
+  bioindication, reconstruction of environment
+
+- All biplot arrows have correlation $r=1$ over all constrained axis:
+  the LC scores are made of them, and therefore the correlation is
+  perfect
+
+- We can also have *regression scores* which together with all other
+  constraints define the fitted values of community, but they are
+  difficult to interpret and never used in graphics
+
+]
+
+.pull-right[
+
+```{r rdabp, results=FALSE}
+par(mar=c(4,4,0,1)+.1)
+palette(viridis(8))
+mrda <- rda(varespec ~ Al + P, varechem)
+plot(mrda, dis=c("lc","bp"), type="n")
+points(mrda, dis="lc", pch=21, bg=4, col=1)
+text(mrda, dis="bp", col=1, lwd=2)
+ordisurf(mrda ~ Al, varechem, add=T, knots=1, col=5, display="lc")
+ordisurf(mrda ~ P, varechem, add=T, knots=1,col=5, display="lc")
+```
+Complete Reindeer Pasture Data
+]
+
+---
+# Factor Constraits
+
+.pull-left[
+
+- Factors (categorical variables) are coded as **contrasts**
+
+- For instance, a factor with four classes is coded by three indicator
+  variables that express the difference against the corner-point case
+
+- Ordered factors can be expressed as polynomial contrasts that
+  describe the linear, quadratic, cubic *etc* effect of the variable
+
+- These contrasts are used as ordinary continuous variables in the analysis
+
+- Contrasts can be coded in many alternative way, but all give the
+  same fitted results and the same ordination
+
+]
+
+.pull-right[
+```{r echo=FALSE}
+data(dune.env)
+cat("*Dunes -- Management:\n")
+contrasts(dune.env$Management)
+cat("\n*Dunes -- Moisture (ordered factor):\n")
+contrasts(dune.env$Moisture)
+```
+]
+
+---
+# Ordination Display of Factors
+
+.pull-left[
+
+- Factors are displayed by the centroids of their levels
+
+- The ordered factors can be described by biplot arrows for their
+  polynomial contrasts in addition to the centroid
+
+- The types of contrasts do not influence the centroids, and we rarely
+  need to know the exact type of contrasts used
+
+]
+
+.pull-right[
+```{r dunefact}
+par(mar=c(4,4,0,1)+.1)
+palette(viridis(8))
+m <- rda(dune ~ Moisture + Management, dune.env)
+plot(m, dis=c("cn","wa"), type="n", scaling="si")
+points(m, dis="wa", pch=21, col=1, bg=5, scaling="si")
+text(m, dis="cn", col=2, xpd=T, scaling="si")
+
+```
+]
+
+---
+# LC or WA Scores ?
+
+.pull-left[
+
+]
+
+.pull-right[
+```{r lcwa}
+par(mar=c(4,4,0,1)+.1)
+palette(viridis(4))
+m <- rda(dune ~ Management, dune.env)
+plot(m, dis=c("lc","wa"), type="n", scaling="si")
+ordispider(m, scaling="si", col=3)
+points(m, dis="wa", pch=21, col=1, bg=dune.env$Management, scaling="si")
+points(m, dis="lc", pch=21, col=1, bg=dune.env$Management, cex=3, scaling="si")
+legend("bottomleft", levels(dune.env$Management), pch=21, col=1, pt.bg=1:4)
+legend("topleft", c("WA","LC"), pch=21, col=1, pt.bg=1, pt.cex=c(1,3))
+```
+]
 
 ---
 class: inverse center middle
