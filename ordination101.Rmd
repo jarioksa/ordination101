@@ -23,12 +23,14 @@ knitr::opts_chunk$set(rgl.newwindow = TRUE)
 ```
 ```{r packages, include = FALSE, cache = FALSE}
 require('vegan')
-if (packageVersion('vegan') < '2.5.0')
+if (packageVersion('vegan') < '2.5.0') # in github
    stop("needs vegan 2.5-0")
 data('varespec', 'varechem', 'mite', 'mite.env', 'dune', 'dune.env')
 data('dune.phylodis','dune.taxon')
 require('natto') # in github, natto::raodist()
 require('vegan3d')
+if (packageVersion('vegan3d') < '1.1.1') # in github
+   stop("needs vegan3d 1.1-1")
 require('labdsv')
 data('bryceveg')
 require(analogue)
