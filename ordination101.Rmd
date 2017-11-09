@@ -102,14 +102,14 @@ varespec
 
 .pull-right[
 ```{r mvexample, results=FALSE}
-par(mar=c(4,4,1,1)+.1)
+par(mar=c(4,4,0,1)+.1)
 palette(viridis(8))
 m <- metaMDS(varespec)
 m <- MDSrotate(m, varechem$Humdepth)
 ef <- envfit(m, varechem)
 plot(m, type="n")
-text(m, dis="si", col=1, cex=0.7)
-text(m, dis="sp", col=5, cex=0.6)
+text(m, dis="si", col=1, cex=0.8)
+text(m, dis="sp", col=5, cex=0.8)
 plot(ef, col=3, p.=0.05)
 ```
 ]
@@ -134,12 +134,12 @@ plot(ef, col=3, p.=0.05)
 
 .pull-right[
 ```{r mvexample2}
-par(mar=c(4,4,1,1)+.1)
+par(mar=c(4,4,0,1)+.1)
 palette(viridis(8))
 # redraw the previous
 plot(m, type="n")
-text(m, dis="si", col=1, cex=0.7)
-text(m, dis="sp", col=5, cex=0.6)
+text(m, dis="si", col=1, cex=0.8)
+text(m, dis="sp", col=5, cex=0.8)
 plot(ef, col=3, p.=0.05)
 ```
 ]
@@ -280,33 +280,33 @@ bott <- varespec[, c("Pleuschr","Cladrang","Cladstel")]
 bott0 <- scale(bott, scale = FALSE)
 par(mar=c(4,4,0,1)+.1)
 palette(viridis(8))
-panel.lm <- function(x, y, col.smooth = 1, ...)
+panel.lm <- function(x, y, col.smooth = 1, tcex=1.5, ...)
 {
     usr <- par("usr"); on.exit(par(usr))
     points(x, y, ...)
     mod <- lm(y ~ x - 1)
     txt <- paste0("Resid.Var = ", round(summary(mod)$sigma^2, 1))
     abline(mod, col = col.smooth, lwd=2)
-    text(mean(usr[1:2]), 0.9*usr[4], txt)
+    text(mean(usr[1:2]), 0.9*usr[4], txt, cex=tcex)
 }
 pairs(bott0, pch=16, col = 4, ylim = range(bott0), panel = panel.lm)
 ```
 ---
 # Best Predictor
-```{r bottpc1, fig.width=10}
+```{r bottpc1, fig.width=10, fig.height=4}
 mod <- rda(bott0)
 koef <- mod$CA$v[,1]
 xlab = paste(formatC(koef,digits=2, flag="+"), names(koef), sep="*",collapse="")
 PC1 <- (bott0 %*% mod$CA$v)[,1]
 df <- data.frame(bott0)
 palette(viridis(8))
-par(mar=c(4,4,1,1)+.1, mfrow=c(1,3))
+par(mar=c(4,4,0,1)+.1, mfrow=c(1,3))
 ylim <- range(bott0)
-plot(Pleuschr ~ PC1, df, type="n", ylim=ylim, xlab=xlab)
+plot(Pleuschr ~ PC1, df, type="n", ylim=ylim, xlab=xlab, cex.lab=1.2)
 panel.lm(PC1, df$Pleuschr, pch=16, col=2, col.smooth=4)
-plot(Cladrang ~ PC1, df, type="n", ylim=ylim, xlab=xlab)
+plot(Cladrang ~ PC1, df, type="n", ylim=ylim, xlab=xlab, cex.lab=1.2)
 panel.lm(PC1, df$Cladrang, pch=16, col=2, col.smooth=4)
-plot(Cladstel ~ PC1, df, type="n", ylim=ylim, xlab=xlab)
+plot(Cladstel ~ PC1, df, type="n", ylim=ylim, xlab=xlab, cex.lab=1.2)
 panel.lm(PC1, df$Cladstel, pch=16, col=2, col.smooth=4)
 
 ```
@@ -403,7 +403,7 @@ panel.lm(PC1, df$Cladstel, pch=16, col=2, col.smooth=4)
 
 .pull-right[
 ```{r plot3sp}
-par(mar=c(4,4,1,1)+.1)
+par(mar=c(4,4,0,1)+.1)
 palette(viridis(8))
 biplot(mod, type = c("text","points"))
 tmp <- ordisurf(mod ~ Cladstel, df, add = TRUE, col=4, knots=1)
@@ -433,7 +433,7 @@ tmp <- ordisurf(mod ~ Cladstel, df, add = TRUE, col=4, knots=1)
 .pull-right[
 
 ```{r plot3sp2}
-par(mar=c(4,4,1,1)+.1)
+par(mar=c(4,4,0,1)+.1)
 palette(viridis(8))
 biplot(mod, col=c(4,1))
 ```
@@ -483,7 +483,7 @@ ordiplot3d(bott0, mar=c(4,4,0,2), angle=20, pch=16, col=2, ax.col=4)
 
 .pull-right[
 ```{r pcavare}
-par(mar=c(4,4,1,1)+.1)
+par(mar=c(4,4,0,1)+.1)
 palette(viridis(8))
 modf <- rda(varespec)
 biplot(modf, col=c(4,1))
@@ -513,10 +513,10 @@ biplot(modf, col=c(4,1))
 .pull-right[
 
 ```{r varabu}
-par(mar=c(4,4,1,1)+.1)
+par(mar=c(4,4,0,1)+.1)
 v <- apply(varespec, 2, var)
 plot(colMeans(varespec), v, xlab="Mean Abundance", ylab="Variance", type="n")
-ordilabel(cbind(colMeans(varespec), v), priority = v, fill = "yellow")
+ordilabel(cbind(colMeans(varespec), v), priority = v, fill = "yellow", cex=1)
 ```
 
 ]
@@ -544,9 +544,9 @@ ordilabel(cbind(colMeans(varespec), v), priority = v, fill = "yellow")
 ```{r pcacorr}
 mod1 <- rda(varespec, scale=TRUE)
 palette(viridis(8))
-par(mar=c(4,4,1,1)+.1)
+par(mar=c(4,4,0,1)+.1)
 plot(mod1, scaling="sites", type="n")
-text(mod1, scaling="sites", dis="site", col = 1, cex=0.7)
+text(mod1, scaling="sites", dis="site", col = 1, cex=0.8)
 text(mod1, scaling="sites", dis="species", col=4, cex=0.8)
 ```
 ]
@@ -568,7 +568,7 @@ class:  inverse center middle
 ```{r mtfgrad, fig.width=10, fig.height=3}
 source('data/mtfit.R')
 palette(viridis(6))
-par(mar=c(4,4,1,1)+.1)
+par(mar=c(4,4,0.4,1)+.1)
 matplot(altfit, mtfit, type="l", lty=1, xlab="Altitude (m)", ylab="Species Response")
 ```
 Mt Field (Tasmania): Fitted Responses
@@ -599,7 +599,7 @@ Mt Field (Tasmania): Fitted Responses
 ```{r horseshoe}
 mod <- rda(mtfit)
 palette(viridis(8))
-par(mar=c(4,4,1,1)+.1)
+par(mar=c(4,4,0,1)+.1)
 plot(mod, dis="si", scaling="si", type="n")
 points(mod, dis="si", scaling="si", pch=16, col=2)
 ```
@@ -608,7 +608,7 @@ PCA of the expected species responses of previous slide
 ---
 # Horseshoe is Common
 
-```{r morehorses, fig.width=10}
+```{r morehorses, fig.width=11}
 palette(viridis(8))
 par(mfrow=c(1,3), mar=c(4,4,2,1)+.1)
 m1 <- rda(varespec)
@@ -790,7 +790,7 @@ tabasco(dune, cca(dune), col=viridis(5))
 - First CA axis preserves the correct ordering: CA is a **seriation method** 
 
 ```{r abernethy, fig.width=8, fig.height=3.5}
-par(mar=c(4,4,1,1)+.1, mfrow=c(1,2))
+par(mar=c(4,4,0.2,1)+.1, mfrow=c(1,2))
 palette(viridis(8))
 m0 <- rda(abernethy[,1:36])
 m1 <- cca(abernethy[,1:36])
@@ -827,7 +827,7 @@ Abernethy Forest pollen data (5515 to 12145 BP)
 
 .pull-right[
 ```{r cascores, fig.height=5.5}
-par(mar=c(4,4,1.4,1)+.1, mfrow=c(2,2))
+par(mar=c(4,4,0.9,0.5)+.1, mfrow=c(2,2))
 palette(viridis(8))
 mod <- cca(dune)
 with(dune, tmp <- ordisurf(mod ~ Poaprat, bubble=2, family=quasipoisson, knots=2, col=6, scaling="si", main="Poa pratensis"))
@@ -866,9 +866,9 @@ with(dune, tmp <- ordisurf(mod ~ Juncarti, bubble=2, family=quasipoisson, knots=
 
 ```{r caplot}
 palette(viridis(8))
-par(mar=c(4,4,1,1)+.1)
+par(mar=c(4,4,0,1)+.1)
 plot(mod, scaling="sites", type="n")
-text(mod, scaling="sites", dis="site", col = 1, cex=0.7)
+text(mod, scaling="sites", dis="site", col = 1, cex=0.8)
 text(mod, scaling="sites", dis="species", col=4, cex=0.8)
 ```
 
@@ -882,7 +882,7 @@ text(mod, scaling="sites", dis="species", col=4, cex=0.8)
 par(mar=c(4,4,1,1)+.1)
 palette(viridis(8))
 with(dune, tmp <- ordisurf(mod ~ Lolipere, bubble=2.5, family=quasipoisson, knots=2, main="scaling='species'", pch=21, col=1, bg=4))
-text(mod, dis="sp", cex=0.6, col=3)
+text(mod, dis="sp", cex=0.8, col=3)
 with(dune, ordispider(mod, Lolipere>0, w=Lolipere, label=FALSE, show=TRUE, col=4))
  with(dune, plot(envfit(mod ~ rep("A",nrow(dune)), w=Lolipere), labels="Lolipere", bg=8))
 ```
@@ -897,7 +897,7 @@ plot(mod, scaling="si", type="n", main="scaling='sites'")
 ordispider(mod, unlist(dune[18,]>0), scaling="si", w = unlist(dune[18,]), show=T, display="sp", col=4)
 cl <- rep("white", nrow(dune))
 cl[18] <- palette()[8]
-ordilabel(mod, dis="si", cex=0.7, scaling="si", fill=cl)
+ordilabel(mod, dis="si", cex=0.8, scaling="si", fill=cl)
 points(mod, scaling="si", display="sp", cex=unlist(dune[18,]/2+0.4), pch=21, bg=4, col=1)
 ```
 **Text:** SUs, **Dots:** species, size: abundance in SU 18
@@ -975,13 +975,13 @@ variables that cause the ordination structure.
 
 .pull-right[
 ```{r envfit}
-par(mar=c(4,4,1,1)+.1)
+par(mar=c(4,4,0,1)+.1)
 palette(viridis(8))
 vmod <- cca(varespec)
 plot(vmod, dis="si", type="n")
 points(vmod, pch=21, col=1, bg=4)
 ef <- envfit(vmod ~ ., varechem)
-plot(ef, col=1, bg=8)
+plot(ef, col=1, bg=8, cex=1)
 ```
 Reindeer Pastures and Soil data
 ]
@@ -990,13 +990,13 @@ Reindeer Pastures and Soil data
 
 ```{r ordisurf, fig.width=10}
 palette(viridis(8))
-par(mar=c(4,4,1,1)+.1, mfrow=c(1,2))
+par(mar=c(4,4,0,1)+.1, mfrow=c(1,2))
 tmp <- ordisurf(vmod ~ Al, varechem, bubble=2.5, pch=21, col=4, bg=4, main="")
 abline(h=0, v=0, lty=3)
-plot(envfit(vmod ~ Al, varechem), col=1, bg=8)
+plot(envfit(vmod ~ Al, varechem), col=1, cex=1, bg=8)
 tmp <- ordisurf(vmod ~ N, varechem, bubble=2.5, pch=21, col=4, bg=4, main="")
 abline(h=0, v=0, lty=3)
-plot(envfit(vmod ~ N, varechem), col=1, bg=8)
+plot(envfit(vmod ~ N, varechem), col=1, cex=1, bg=8)
 ```
 
 ]
@@ -1059,12 +1059,12 @@ ef$vectors
 
 .pull-right[
 ```{r factor}
-par(mar=c(4,4,1,1)+.1)
+par(mar=c(4,4,0,1)+.1)
 palette(viridis(8))
 eff <- envfit(mod ~ Management, dune.env)
 plot(mod, dis="si", type="n")
 with(dune.env, points(mod, dis="si", pch=21, bg=viridis(4)[as.numeric(Management)]))
-plot(eff, labels=levels(dune.env$Management), bg=8)
+plot(eff, labels=levels(dune.env$Management), cex=1, bg=8)
 legend("topright", levels(dune.env$Management), pch=21, pt.bg=viridis(4), title = "Management")
 ```
 ]
@@ -1072,7 +1072,7 @@ legend("topright", levels(dune.env$Management), pch=21, pt.bg=viridis(4), title 
 ## Displaying Factors
 
 ```{r factorshow, fig.width=8, fig.height=5.6}
-par(mar=c(3,4,1,1)+.1, mfrow=c(2,2))
+par(mar=c(3,4,0.8,1)+.1, mfrow=c(2,2))
 palette(viridis(8))
 plot(mod, dis="si", type="n", main="Spider")
 ordispider(mod, dune.env$Management, col=viridis(4), label=TRUE)
@@ -1110,9 +1110,9 @@ eff$factors
 .pull-right[
 ```{r confell}
 palette(viridis(8))
-par(mar=c(4,4,1,1)+.1)
+par(mar=c(4,4,0.8,1)+.1)
 plot(mod, dis="si", type="n", main="95% Confidence Ellipse")
-ordiellipse(mod, dune.env$Management, kind="se", conf=0.95, draw="poly", col=viridis(4), label=TRUE)
+ordiellipse(mod, dune.env$Management, kind="se", conf=0.95, draw="poly", col=viridis(4), label=TRUE, cex=1)
 with(dune.env, points(mod, dis="si", pch=21, bg=viridis(4)[as.numeric(Management)]))
 ```
 ]
@@ -1159,7 +1159,8 @@ multidimensional scaling.
 - More precisely, these distances are known as Euclidean distances in
   the species space
 
-- Why are they called **Euclidean**?
+- Why are they called **Euclidean**? &mdash; Because they **are**
+  distances in Euclidean space!
 
 - In species space, SUs are points on species axes that are at right
   angle to each others. The *difference* of species $j$ abundance for two
@@ -1232,7 +1233,7 @@ $$~=\frac{A+B-2J}{A+B}$$
 
 ```{r}
 palette(viridis(8))
-par(mar=c(4,4,1,1)+.1)
+par(mar=c(4,4,0,1)+.1)
 d <- designdist(varespec, "(A+B-2*J)/(A+B)", "binary")
 dmod <- dbrda(d ~ 1)
 plot(dmod)
@@ -1265,7 +1266,7 @@ Reindeer Pastures
 .pull-right[
 ```{r}
 palette(viridis(8))
-par(mar=c(4,4,1,1)+.1)
+par(mar=c(4,4,0,1)+.1)
 plot(hclust(dune.phylodis), hang=-1, ylab="Time (Myr)", main="", sub="", xlab="")
 abline(h=65, col=4)
 ```
@@ -1276,18 +1277,18 @@ Data for Tree: Zanne *et al* (2014), *Nature* **506,** 89&mdash;92.
 
 ```{r fig.width=11}
 palette(viridis(8))
-par(mar=c(4,4,1,1)+.1, mfrow=c(1,2))
+par(mar=c(4,4,0,1)+.1, mfrow=c(1,2))
 m0 <- rda(dune)
 pl <- plot(m0, type="n")
 text(pl, "sites", pch=21, col=1, bg=1)
-text(pl, "species", col=3, cex=0.7)
+text(pl, "species", col=3, cex=0.8)
 ordispider(m0, dune.taxon$Family, display="species", label=TRUE, col=3, cex=0.8)
 d <- distrao(dune, dune.phylodis, dmax=65)
 md <- dbrda(d ~ 1, sqrt.dist = TRUE)
 sppscores(md) <- dune
 pl <- plot(md, type="n")
 text(pl, "sites", pch=21, col=1, bg=1)
-text(pl, "species", col=3, cex=0.7)
+text(pl, "species", col=3, cex=0.8)
 ordispider(md, dune.taxon$Family, display="species", label=TRUE, cex=0.8)
 ```
 ---
@@ -1327,9 +1328,9 @@ parametric mapping.
 .pull-right[
 
 ```{r}
-par(mar=c(4,4,1,1)+.1)
+par(mar=c(4,4,0,1)+.1)
 palette(viridis(8))
-stressplot(cca(mite), l.col=2, p.col=6)
+stressplot(cca(mite), l.col=2, p.col="white", bg=6, pch=21)
 ```
 Oribatid mites: 2-dim CA of $\chi$-distances
 
@@ -1360,10 +1361,10 @@ Oribatid mites: 2-dim CA of $\chi$-distances
 
 .pull-right[
 ```{r}
-par(mar=c(4,4,1,1)+.1)
+par(mar=c(4,4,0,1)+.1)
 palette(viridis(8))
 mmod <- metaMDS(mite, trace=FALSE, parallel=2)
-stressplot(mmod, l.col=2, p.col=6)
+stressplot(mmod, l.col=2, p.col="white", bg=6, pch=21)
 ```
 .small[Oribatid mites: NMDS in 2D]
 
@@ -1456,15 +1457,15 @@ Euclidean distances between points in the ordination
 
 ```{r fig.width=11}
 palette(viridis(8))
-par(mar=c(4,4,1,1)+.1, mfrow=c(1,2))
+par(mar=c(4,4,0,1)+.1, mfrow=c(1,2))
 plot(mmod, type="n")
-text(mmod, dis="si", col=1, cex=0.7)
-text(mmod, dis="sp", col=5, cex=0.6, xpd=TRUE)
+text(mmod, dis="si", col=1, cex=0.8)
+text(mmod, dis="sp", col=5, cex=0.8, xpd=TRUE)
 plot(envfit(mmod ~ SubsDens + WatrCont + Shrub, mite.env), col=3, bg=8, xpd=TRUE)
 mrot <- MDSrotate(mmod, mite.env$WatrCont)
 plot(mrot, type="n")
-text(mrot, dis="si", col=1, cex=0.7)
-text(mrot, dis="sp", col=5, cex=0.6, xpd=TRUE)
+text(mrot, dis="si", col=1, cex=0.8)
+text(mrot, dis="sp", col=5, cex=0.8, xpd=TRUE)
 plot(envfit(mrot ~ SubsDens + WatrCont + Shrub, mite.env), col=3, bg=8, xpd=TRUE)
 
 ```
@@ -1473,7 +1474,7 @@ plot(envfit(mrot ~ SubsDens + WatrCont + Shrub, mite.env), col=3, bg=8, xpd=TRUE
 
 ```{r abergrid, fig.width=8,fig.height=5.5, results=FALSE}
 palette(viridis(8))
-par(mar=c(4,4,1,1)+.1, mfrow=c(2,2))
+par(mar=c(4,4,0.7,1)+.1, mfrow=c(2,2))
 #x <- rbinom(prod(dim(mtfit)), 1, mtfit)
 #dim(x) <- dim(mtfit)
 x <- abernethy[,1:36]
@@ -1504,12 +1505,12 @@ points(pl, "sites", pch=16, col=2)
 ## Stress Plot Indicates NMDS Does Best
 
 ```{r aberstress, fig.width=8,fig.height=5.5, results=FALSE}
-par(mar=c(4,4,1,1)+.1, mfrow=c(2,2))
+par(mar=c(4,4,0.6,1)+.1, mfrow=c(2,2))
 palette(viridis(8))
-stressplot(m1, l.col=2, p.col=6, main="PCA: Hellinger")
-stressplot(m2, l.col=2, p.col=6, main="CA: Chi")
-stressplot(m3, l.col=2, p.col=6, main="PCoA: Bray-Curtis / Wisconsin")
-stressplot(m4, l.col=2, p.col=6, main="NMDS: Bray-Curtis / Wisconsin")
+stressplot(m1, l.col=2, p.col="white",bg=6,pch=21, main="PCA: Hellinger")
+stressplot(m2, l.col=2, p.col="white",bg=6,pch=21, main="CA: Chi")
+stressplot(m3, l.col=2, p.col="white",bg=6, pch=21,main="PCoA: Bray-Curtis / Wisconsin")
+stressplot(m4, l.col=2, p.col="white",bg=6,pch=21, main="NMDS: Bray-Curtis / Wisconsin")
 ```
 ---
 # Is NMDS Credible?
@@ -1536,11 +1537,11 @@ stressplot(m4, l.col=2, p.col=6, main="NMDS: Bray-Curtis / Wisconsin")
 .pull-right[
 
 ```{r abernmds}
-par(mar=c(4,4,1,1)+.1)
+par(mar=c(4,4,0,0)+.1)
 palette(viridis(8))
 sppscores(m4) <- x
 pl <- plot(m4, type="n")
-text(pl, "sites", labels=abernethy$Age, cex=0.6)
+text(pl, "sites", labels=abernethy$Age, cex=0.7)
 ordiarrows(pl, rep("a",nrow(abernethy)), col=7)
 ordilabel(pl, dis="sp", cex=0.7, labels=make.cepnames(colnames(x)), priority=colSums(x), col=3)
 ```
@@ -1634,7 +1635,7 @@ koef <- coef(cmod)[,1]
 koef <- paste(formatC(koef, digits=3, flag="+"), names(koef), sep="*", collapse="")
 ylim <- range(bott0)
 for(i in 1:3) {
-   plot(rda1, bott0[,i], ylim=ylim, xlab=koef, ylab=colnames(bott0)[i], type="n", cex.lab=1.5)
+   plot(rda1, bott0[,i], ylim=ylim, xlab=koef, ylab=colnames(bott0)[i], type="n", cex.lab=1.6)
    panel.lm(rda1, bott0[,i], pch=16, col=2, col.smooth=4)
 }
 ```
@@ -1660,7 +1661,7 @@ koef <- paste(formatC(koef, digits=2, flag="+"), names(koef), sep="*", collapse=
 fv <- fitted(cmod)
 ylim <- range(fv)
 for(i in 1:3) {
-   plot(rda1, fv[,i], ylim=ylim, xlab=koef, ylab=colnames(fv)[i], type="n", cex.lab=1.5)
+   plot(rda1, fv[,i], ylim=ylim, xlab=koef, ylab=colnames(fv)[i], type="n", cex.lab=1.5, cex=1.2)
    panel.lm(rda1, fv[,i], pch=16, col=2, col.smooth=4)
 }
 ```
