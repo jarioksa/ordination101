@@ -1699,6 +1699,36 @@ for(i in 1:3) {
   unconstrained &mdash; or constraints did not have any effect!
 
 ---
+# Flavours of Constrained Ordination
+
+- Constrained ordination is an extension of eigenvector ordination
+
+- **Redundancy Analysis (RDA):** extends PCA
+
+  - Explains variance, shows Euclidean distances
+
+  - PCA was poor for community data, but RDA ordinates fitted values
+    &mdash; and these are linear &mdash; and RDA works OK with
+    communities
+
+  - It is still best to use correlations or Hellinger distances to
+    tune down superdominant species
+
+- **Constrained or Canonical Correspondence Analysis (CCA):** extends CA
+
+  - Explains $\chi^2$, shows $\chi$-distances
+  
+  - The most popular approach (but this depends on your cultural
+    background: Francophones prefer RDA)
+
+- **Distance-based Redundancy Analysis (dbRDA):** extends PCoA
+
+  - Explains any squared dissimilarities, shows any dissimilarities
+  
+  - If you are using dissimilarities elsewhere, it is consistent to
+    use them in constrained ordination
+
+---
 # The Scores
 
 - **Species scores**
@@ -1807,6 +1837,8 @@ contrasts(dune.env$Moisture)
 - The types of contrasts do not influence the centroids, and we rarely
   need to know the exact type of contrasts used
 
+  - Contrasts are internal to the program
+
 ]
 
 .pull-right[
@@ -1822,9 +1854,25 @@ text(m, dis="cn", col=2, xpd=T, scaling="si")
 ]
 
 ---
-# LC or WA Scores ?
+# LC or WA Scores?
 
 .pull-left[
+
+- LC scores really are linear combinations of constraings: and this
+  means that they really are defined by constraints only
+
+- Equal constraints means equal LC scores &mdash; and the species
+  composition has no influence
+
+- For a single factor constraint, LC scores with the same factor level
+  will fall into same point
+
+- WA scores show scatter with respect to LC scores: they tell how well
+  species composition can *predict* the constraints
+
+- LC are completely defined also for several factors and continuous
+  variables, but with larger number of constraints this is not
+  immediately visible
 
 ]
 
@@ -1840,10 +1888,119 @@ points(m, dis="lc", pch=21, col=1, bg=dune.env$Management, cex=3, scaling="si")
 legend("bottomleft", levels(dune.env$Management), pch=21, col=1, pt.bg=1:4)
 legend("topleft", c("WA","LC"), pch=21, col=1, pt.bg=1, pt.cex=c(1,3))
 ```
+Dune Meadows constrained by Management
+]
+
+---
+# WA Scores & Prediction of Environment
+
+.pull-left[
+
+- LC scores *are* the environment, but WA scores are based on
+  community composition
+
+- WA scores are as similar to LC scores as possible: they predict the
+  environment as well as the community composition can (with linear
+  mathematics applied in ordination)
+
+- This is known as biondication, calibration or reconstruction of
+  environment in the various field of Ecology, Environmental
+  Sciences and Palaeoecology
+
+- We should always use cross-validation to assess the goodness of
+  prediction: test performance of the method in another subset of the
+  data than was used in constrained ordination
+
+]
+
+.pull-right[
+```{r rdacalib, fig.height=4.5}
+par(mar=c(4,4,0,1)+.1)
+palette(viridis(8))
+mmite <- rda(decostand(mite, "hell") ~ WatrCont + SubsDens + Topo + Shrub,
+   data=mite.env)
+cal <- calibrate(mmite)[,"WatrCont"]
+plot(cal ~ WatrCont, mite.env, xlab="Observed WatrCont", ylab="WatrCont Predicted from WA scores", pch=21, col="white", bg=4, cex=1.2)
+abline(0, 1, lwd=3, col=1)
+legend("topleft", "Identity", lty=1, lwd=3, col=1, bty="n")
+```
+.small[`r deparse(mmite$call)`]
 ]
 
 ---
 class: inverse center middle
+
+# Permutation Tests
+
+Constrained Ordination is based on regression with external variables,
+and this allows for statistical analysis of constraints. The response
+data are multivariate, correlated and non-Normal, and we cannot use
+normal paametric tests, but we must use permutation tests.
+
+---
+# Permutation Tests
+
+- The goodness of ordination solution is analysed using similar
+  $F$-statistic as in ordinary ANOVA
+$$F = \frac{\Lambda_k/p}{\Lambda_r/(n-p-1)}$$
+  where $\Lambda_k$ is the constrained inertia explained by $p$ constrained
+  axes, $\Lambda_r$ is the inertia of residuals, and $n$ is the number of
+  SUs
+
+- The total inertia $\Lambda$ (variance, $\chi^2$, squared
+  dissimilarities) is decomposed as $\Lambda = \Lambda_k + \Lambda_r$
+
+- In permutation test the response is shuffled into random order, the
+  ordination is repeated and the $F$ is evaluated
+
+- This gives us a great number of permutation $F$-values of randomized data
+
+- The observed $F$ is put among the permutation $F$, and all $F$ are
+  ordered by maginuted
+
+- The $P$-value is the proportional rank of observed $F$: this gives
+  the probability to have similar or better $F$ in random data
+
+- If we have 999 permutations and we add the observed $F$ to these,
+  the proportial ranks are for 1000 values, and the lowest possible
+  $P=$  0.001
+
+---
+# Overall Test
+
+.pull-left[
+.small[
+```{r echo=FALSE}
+mano <- cca(dune ~ A1 + Management + Moisture, dune.env)
+ano <- anova(mano)
+ano
+```
+]
+
+- Management has 4 factor levels and uses 3 contrasts, Moisture is a
+  4-level ordered factor and uses 3 contrasts, and A1 is continuous
+  variable, and together these use 7 degrees of freedom, and the total
+  inertia is `r round(mano$tot.chi, 3)` giving
+
+$$F = \frac{`r round(mano$CCA$tot.chi, 3)`/`r mano$CCA$rank`}{`r round(mano$CA$tot.chi, 3)`/(`r nobs(mano)`-`r mano$CCA$rank` -1)}$$
+
+
+]
+
+.pull-right[
+```{r anova, echo=FALSE}
+par(mar=c(4,4,0,1)+.1)
+palette(viridis(8))
+# I hate trellis
+lstrip <- trellis.par.get("strip.background")
+lstrip$alpha <- 0.5
+lstrip$col <- rev(viridis(8))
+trellis.par.set("strip.background", lstrip)
+densityplot(permustats(ano), pch=16, cex=0.6, col=1)
+```
+]
+---
+class: inverse center bottom
 
 # The End
 --
@@ -1853,6 +2010,7 @@ class: inverse center middle
 ---
 .small[
 ```{r end, echo=FALSE}
+options(width=132)
 sessionInfo()
 ``` 
 ]
