@@ -25,7 +25,7 @@ knitr::opts_chunk$set(rgl.newwindow = TRUE)
 require('vegan')
 if (packageVersion('vegan') < '2.5.0') # in github
    stop("needs vegan 2.5-0")
-data('varespec', 'varechem', 'mite', 'mite.env', 'dune', 'dune.env')
+data('varespec', 'varechem', 'mite', 'mite.env', 'dune', 'dune.env', 'BCI', 'BCI.env')
 data('dune.phylodis','dune.taxon')
 require('natto') # in github, natto::raodist()
 require('vegan3d')
@@ -1994,11 +1994,139 @@ palette(viridis(8))
 # I hate trellis
 lstrip <- trellis.par.get("strip.background")
 lstrip$alpha <- 0.5
-lstrip$col <- rev(viridis(8))
+lstrip$col <- rev(viridis(8))[-1]
 trellis.par.set("strip.background", lstrip)
 densityplot(permustats(ano), pch=16, cex=0.6, col=1)
 ```
 ]
+
+---
+# Terms: Sequential Tests
+
+.pull-left[
+.small[
+```{r, ech0=FALSE}
+(ano <- anova(mano, by = "term"))
+```
+]
+
+- Sequential: Explains residuals of the previous terms
+
+- Order-dependent
+
+- Decomposes inertia: sum equals to total inertia
+
+]
+
+.pull-right[
+```{r anovaseq}
+par(mar=c(4,4,0,1)+.1)
+palette(viridis(8))
+trellis.par.set("strip.background", lstrip)
+densityplot(permustats(ano), pch=16, cex=0.6, col=1, layout=c(1,3), as.table=TRUE)
+```
+]
+
+---
+# Terms: Marginal Tests
+
+.pull-left[
+.small[
+```{r, ech0=FALSE}
+(ano <- anova(mano, by = "margin"))
+```
+]
+
+- Marginal: Explains residuals after all other terms
+
+- Order-independent
+
+- Shows only the unique component of inertia that cannot be explained
+  by any other term
+
+]
+
+.pull-right[
+```{r anovamar}
+par(mar=c(4,4,0,1)+.1)
+palette(viridis(8))
+trellis.par.set("strip.background", lstrip)
+densityplot(permustats(ano), pch=16, cex=0.6, col=1, layout=c(1,3), as.table=TRUE)
+
+```
+]
+
+---
+# Restricted permutations
+
+.pull-left[
+
+- Restricted permutation allows analysis of data with dependencies
+
+- **Plots** will not move and all other permutations is within them
+
+- **Blocks** of SUs can be permuted with other blocks
+
+- SUs within Plots and Blocks can be permuted freely, as
+  unidimensional series or as spatial grids
+
+- Series and grids can be mirrorred: Mirrorring makes sense for
+  spatial grids, but not often for time series
+
+- Permutations can be similar within all Plots and Blocks
+
+- For instance, Barro Colorado Island Rainforest plots are in
+  contiguous grid, and free permutation breaks spatial structure
+
+]
+
+.pull-right[
+```{r respermu, fig.height=4.5}
+par(mar=c(0,0,0,0)+.25, mfrow=c(2,1))
+palette(viridis(8))
+hab <- as.numeric(BCI.env$Habitat)
+dim(hab) <- c(5,10)
+N <- unique(BCI.env$UTM.NS)
+E <- unique(BCI.env$UTM.EW)
+image(E, N, t(hab), col=viridis(5), axes=F, xlab="",ylab="", asp=1)
+text(BCI.env[,1:2], labels=shuffleFree(50,50), col=c(8,8,1,1,1)[BCI.env$Habitat])
+image(E, N, t(hab), col=viridis(5), axes=F, xlab="",ylab="", asp=1)
+text(BCI.env[,1:2], labels=shuffleGrid(5,10,mirror=TRUE), col=c(8,8,1,1,1)[BCI.env$Habitat])
+```
+Barro Colorado Island Rainforests (BCI): Free & Grid Permutations &mdash; colour: Habitat type
+]
+
+---
+# Free and Spatial Error
+
+.pull-left[
+.small[
+```{r bcifree, echo=FALSE, fig.height=3}
+palette(viridis(8))
+par(mar=c(4,4,0,1)+.1)
+trellis.par.set("strip.background", lstrip)
+mbci <- cca(BCI ~ Habitat, BCI.env)
+ano <- anova(mbci)
+densityplot(permustats(ano), col=1, pch=16, cex=0.6)
+ano
+```
+]
+]
+
+.pull-right[
+.small[
+```{r bcigrid, echo=FALSE, fig.height=3}
+palette(viridis(8))
+par(mar=c(4,4,0,1)+.1)
+trellis.par.set("strip.background", lstrip)
+ctrl <- how(within=Within(type="grid", nrow=5, ncol=10, mirror=TRUE), nperm=999)
+ano <- anova(mbci, permutations=ctrl)
+densityplot(permustats(ano), col=1, pch=16, cex=0.6)
+ano
+```
+]
+]
+
 ---
 class: inverse center bottom
 
