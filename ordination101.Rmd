@@ -1970,8 +1970,9 @@ $$F = \frac{\Lambda_k/p}{\Lambda_r/(n-p-1)}$$
 
 .pull-left[
 .small[
-```{r echo=FALSE}
+```{r mano, echo=FALSE}
 mano <- cca(dune ~ A1 + Management + Moisture, dune.env)
+set.seed(4711)
 ano <- anova(mano)
 ano
 ```
@@ -1988,7 +1989,7 @@ $$F = \frac{`r round(mano$CCA$tot.chi, 3)`/`r mano$CCA$rank`}{`r round(mano$CA$t
 ]
 
 .pull-right[
-```{r anova, echo=FALSE}
+```{r anova, dependson='mano', echo=FALSE}
 par(mar=c(4,4,0,1)+.1)
 palette(viridis(8))
 # I hate trellis
@@ -2005,7 +2006,8 @@ densityplot(permustats(ano), pch=16, cex=0.6, col=1)
 
 .pull-left[
 .small[
-```{r, ech0=FALSE}
+```{r manoseq, echo=FALSE, dependson='mano'}
+set.seed(4711)
 (ano <- anova(mano, by = "term"))
 ```
 ]
@@ -2019,7 +2021,7 @@ densityplot(permustats(ano), pch=16, cex=0.6, col=1)
 ]
 
 .pull-right[
-```{r anovaseq}
+```{r anovaseq, dependson='manoseq'}
 par(mar=c(4,4,0,1)+.1)
 palette(viridis(8))
 trellis.par.set("strip.background", lstrip)
@@ -2032,7 +2034,8 @@ densityplot(permustats(ano), pch=16, cex=0.6, col=1, layout=c(1,3), as.table=TRU
 
 .pull-left[
 .small[
-```{r, ech0=FALSE}
+```{r manomar, echo=FALSE, dependson='mano'}
+set.seed(4711)
 (ano <- anova(mano, by = "margin"))
 ```
 ]
@@ -2047,7 +2050,7 @@ densityplot(permustats(ano), pch=16, cex=0.6, col=1, layout=c(1,3), as.table=TRU
 ]
 
 .pull-right[
-```{r anovamar}
+```{r anovamar, dependson='manomar'}
 par(mar=c(4,4,0,1)+.1)
 palette(viridis(8))
 trellis.par.set("strip.background", lstrip)
@@ -2063,20 +2066,19 @@ densityplot(permustats(ano), pch=16, cex=0.6, col=1, layout=c(1,3), as.table=TRU
 
 - Restricted permutation allows analysis of data with dependencies
 
-- **Plots** will not move and all other permutations is within them
+- Clusters of SUS that will not move or that can be permuted with
+  other clusters
 
-- **Blocks** of SUs can be permuted with other blocks
+- SUs within clusters can be permuted freely, oa as unidimensional
+  series or as spatial grids which can be mirrorred
 
-- SUs within Plots and Blocks can be permuted freely, as
-  unidimensional series or as spatial grids
-
-- Series and grids can be mirrorred: Mirrorring makes sense for
-  spatial grids, but not often for time series
-
-- Permutations can be similar within all Plots and Blocks
+- Permutations can be constant or independent within clusters
 
 - For instance, Barro Colorado Island Rainforest plots are in
   contiguous grid, and free permutation breaks spatial structure
+
+- BCI has $50! = `r signif(factorial(50), 4)`$ free permutations, but
+  only $50 \times 4 = 200$ permutations with mirrorred grid
 
 ]
 
@@ -2084,6 +2086,7 @@ densityplot(permustats(ano), pch=16, cex=0.6, col=1, layout=c(1,3), as.table=TRU
 ```{r respermu, fig.height=4.5}
 par(mar=c(0,0,0,0)+.25, mfrow=c(2,1))
 palette(viridis(8))
+set.seed(4711)
 hab <- as.numeric(BCI.env$Habitat)
 dim(hab) <- c(5,10)
 N <- unique(BCI.env$UTM.NS)
@@ -2119,6 +2122,7 @@ ano
 palette(viridis(8))
 par(mar=c(4,4,0,1)+.1)
 trellis.par.set("strip.background", lstrip)
+# will do only 199 or all possible permutations
 ctrl <- how(within=Within(type="grid", nrow=5, ncol=10, mirror=TRUE), nperm=999)
 ano <- anova(mbci, permutations=ctrl)
 densityplot(permustats(ano), col=1, pch=16, cex=0.6)
