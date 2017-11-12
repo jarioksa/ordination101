@@ -32,7 +32,7 @@ require('vegan3d')
 if (packageVersion('vegan3d') < '1.1.1') # in github
    stop("needs vegan3d 1.1-1")
 require('labdsv')
-data('bryceveg')
+data('bryceveg','brycesite')
 require(analogue)
 data(abernethy)
 library('mgcv')
@@ -1555,6 +1555,15 @@ ordilabel(pl, dis="sp", cex=0.7, labels=make.cepnames(colnames(x)), priority=col
 ---
 class: inverse center middle
 
+# Work In Progress
+
+--
+## Proceed with Caution
+--
+
+---
+class: inverse center middle
+
 # Constrained Ordination
 
 Constrained ordination is also known as canonical ordination. In
@@ -1802,7 +1811,7 @@ Complete Reindeer Pasture Data
 ]
 
 ---
-# Factor Constraits
+# Factor Constraints
 
 .pull-left[
 
@@ -1937,7 +1946,7 @@ legend("topleft", "Identity", lty=1, lwd=3, col=1, bty="n")
 ---
 class: inverse center middle
 
-# Permutation Tests
+## Permutation Tests
 
 Constrained Ordination is based on regression with external variables,
 and this allows for statistical analysis of constraints. The response
@@ -2141,9 +2150,163 @@ ano
 ---
 class: inverse center middle
 
-# Model Choice
+## Model Choice
+
+Constrained ordination is application of regression analysis on
+multivariate responses. If we have a designed experiment or strong
+theory, we can select the constraints in advance and test their
+significances. In exploratory analysis we must choose the variables
+among candidates. This means trouble.
 
 ---
+# What Variables to Keep?
+
+- If we have a designed experiment, we keep and analyse all design
+  variables &mdash; even if these are insignificant
+
+- If we have a strong advance theory we inspect, we keep and analyse
+  all variabels of interest &mdash; even those that prove to be
+  insignficant
+
+- In explanatory analysis we choose the variables among candidates,
+  and normally want all kept variables be significant
+
+- The problem is that there may be several different sets of
+  significant variables
+
+- In particular when explanatory variables are correlated, there may
+  be several alternative good choices, and picking one of correlated
+  variables can have cascading effects
+
+- Automatic procedures of model choice are popular but dangerous,
+  unstable and biased
+
+- If variables are picked by their goodness, the statistical tests on
+  their goodness are biased
+
+- All these problems are similar as in ordinary regression
+
+---
+# Automatic Model Choice
+
+```{r ordistep, fig.width=10, echo=FALSE, results=FALSE}
+par(mar=c(4,4,1,1)+.1, mfrow=c(1,2))
+palette(viridis(8))
+m0 <- cca(varespec ~ 1, varechem)
+m1 <- cca(varespec ~ ., varechem)
+set.seed(4711)
+mup <- ordistep(m0, formula(m1), permutations=999)
+mdown <- ordistep(m1, permutations=999, Pout=0.05)
+plot(mup, main="Forward Selection", type="n")
+text(mup, dis="si", col=3, cex=0.8)
+text(mup, dis="sp", col=4, cex=0.8)
+text(mup, dis="bp", col=1, cex=1.2, xpd=TRUE)
+plot(mdown, main="Backward Elimination", type="n")
+text(mdown, dis="si", col=3, cex=0.8)
+text(mdown, dis="sp", col=4, cex=0.8)
+text(mdown, dis="bp", col=1, cex=1.2, xpd=TRUE)
+```
+---
+# Both Models Are Good
+
+.pull-left[
+.small[
+```{r echo=FALSE, dependson='ordistep'}
+set.seed(4711)
+anova(mup, by="term")
+```
+]]
+
+.pull-right[
+.small[
+```{r echo=FALSE, dependson='ordistep'}
+set.seed(4711)
+anova(mdown, by="margin")
+```
+]]
+
+---
+# How Many Constraints?
+
+- Constrained ordination is based on the linear combinations of constraints
+
+- If there are many constraints, almost anything can be made of their
+  linear combinations
+
+- **Many** constraints mean **no** constraints
+
+- With many constraints it can be almost the same to use unconstrained
+  ordination plus vector fitting &mdash; and actually this can be
+  wiser
+
+- Constrained ordination can cure curves of PCA, but then we need a
+  low number of constraints
+
+- Automatic choice of variables tries to liberate ordination from
+  constraints
+
+  - The best possible constraint is an unconstrained ordination axis
+    (PC, CA), and with automatical model choice we try to get as close
+    to those as possible
+
+- The best use of constrained methods is for designed patterns, and
+  the next good is strict constraint with interesting variables
+
+---
+# Ordination Wants to be Free!
+
+```{r liberame, fig.width=12, results=FALSE, echo=FALSE}
+par(mar=c(4,4,0,0.3)+.1, mfrow=c(1,3))
+palette(viridis(8))
+k <- complete.cases(brycesite)
+m0 <- dbrda(vegdist(bryceveg) ~ 1, data=brycesite, subset=k)
+m2 <- dbrda(vegdist(bryceveg) ~ elev + depth, data=brycesite, subset=k)
+m <- dbrda(vegdist(bryceveg) ~ annrad + asp + av + depth + grorad + pos + elev + slope, brycesite, subset=k)
+set.seed(4711)
+m <- ordistep(m0, formula(m), permutations=999, parallel=2)
+plot(m0, type="n", dis="si", scaling="si")
+points(m0, dis="si", pch=21, col=1, bg = c(4,8)[brycesite$depth[k]], scaling="si")
+legend("topleft", levels(brycesite$depth), pch=21, col=1, pt.bg=c(4,8), title="Soil Depth")
+plot(m2, type="n", dis=c("si","cn"), scaling="si")
+points(m2, dis="si", pch=21, col=1, bg = c(4,8)[brycesite$depth[k]], scaling="si")
+text(m2, dis="cn", col=1, cex=1.2, xpd=TRUE, scaling="si")
+plot(m, type="n", scaling="si", dis=c("si","cn"))
+points(m, dis="si", pch=21, col=1, bg = c(4,8)[brycesite$depth[k]], scaling="si")
+text(m, dis="cn", col=1, cex=1.2, xpd=TRUE, scaling="si")
+```
+Bryce Canyon, Bray-Curtis dissimilarity
+
+---
+# Too Many Constraints?
+
+- Constrained ordination **is** regression, and we have all the same
+  problems as in univariate regression &mdash; but multiplied
+
+- Too many regressors is overfitting: Absolute limit is taht the
+  number of constraints equals the number of observations, and we have
+  a complete fit with no residual error
+
+- Two constraints can allow the return of the curve if these are
+  similar to unconstrained axes or have quadratic relation
+
+- You may be worried when
+
+  - Residual variation is low
+
+  - First constrained eigenvalues are nearly as high as first
+    eigenvalues of unconstrained ordination
+
+  - First unconstrained residual eigenvalues are low compared to first
+    constrained ones
+
+  - You see a curve
+
+- It may be better to use unconstrained analysis plus fitted vectors
+  and factors than many useless constraints
+
+
+---
+
 class: inverse center bottom
 
 # The End
