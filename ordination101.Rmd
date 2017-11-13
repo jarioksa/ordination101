@@ -1558,15 +1558,6 @@ ordilabel(pl, dis="sp", cex=0.7, labels=make.cepnames(colnames(x)), priority=col
 ---
 class: inverse center middle
 
-# Work in Progress
-
---
-## Proceed with Caution
---
-
----
-class: inverse center middle
-
 # Constrained Ordination
 
 Constrained ordination is also known as canonical ordination. In
@@ -1589,7 +1580,7 @@ the analysis of designed experiments.
   observed values
 
 - In *constrained* ordination we explain species with *external
-  variables* (such as environement)
+  variables* (such as environment)
 
 - This gives *poorer* results than unconstrained ordination, but more
   easily interpretable because we constrain the results with the very
@@ -1613,7 +1604,7 @@ the analysis of designed experiments.
 
 **Method 1**
 
-- Use the linear combination of constraints as the explanatory
+- Use a linear combination of constraints as the explanatory
   variable, and find the linear combination that has the smallest
   residual variation for all species
 
@@ -1700,7 +1691,7 @@ for(i in 1:3) {
   axes: the **rank** of constraints was 2
 
 - Both methods gave the same two constrained axes and the same
-  eigevalues (explained variance)
+  eigenvalues (explained variance)
 
 - The sum of first two unconstrained eigenvalues was
   `r round(sum(rda(bott0)$CA$eig[1:2]), 1)` which is more than
@@ -1714,8 +1705,6 @@ for(i in 1:3) {
 
 ---
 # Flavours of Constrained Ordination
-
-- Constrained ordination is an extension of eigenvector ordination
 
 - **Redundancy Analysis (RDA):** extends PCA
 
@@ -1824,11 +1813,11 @@ Complete Reindeer Pasture Data
   variables that express the difference against the corner-point case
 
 - Ordered factors can be expressed as polynomial contrasts that
-  describe the linear, quadratic, cubic *etc* effect of the variable
+  describe the linear, quadratic, cubic *etc* effects of the variable
 
 - These contrasts are used as ordinary continuous variables in the analysis
 
-- Contrasts can be coded in many alternative way, but all give the
+- Contrasts can be coded in many alternative ways, but all give the
   same fitted results and the same ordination
 
 ]
@@ -1839,7 +1828,7 @@ data(dune.env)
 cat("*Dunes -- Management:\n")
 contrasts(dune.env$Management)
 cat("\n*Dunes -- Moisture (ordered factor):\n")
-contrasts(dune.env$Moisture)
+signif(contrasts(dune.env$Moisture), 4)
 ```
 ]
 
@@ -1877,8 +1866,8 @@ text(m, dis="cn", col=2, xpd=T, scaling="si")
 
 .pull-left[
 
-- LC scores really are linear combinations of constraints: and this
-  means that they really are defined by constraints only
+- LC scores are linear combinations of constraints: and this means
+  that they really are defined by constraints only
 
 - Equal constraints means equal LC scores &mdash; and the species
   composition has no influence!
@@ -1920,7 +1909,7 @@ Dune Meadows constrained by Management
 
 - WA scores are as similar to LC scores as possible: they predict the
   environment as well as the community composition is able (with linear
-  mathematics of ordination)
+  algebra of ordination)
 
 - This is known as biondication, calibration or reconstruction of
   environment in the various fields of Ecology, Environmental
@@ -1954,7 +1943,7 @@ class: inverse center middle
 Constrained Ordination is based on regression with external variables,
 and this allows for statistical analysis of constraints. The response
 data are multivariate, correlated and non-Normal, and we cannot use
-normal paametric tests, but we must use permutation tests.
+normal parametric tests, but we must use permutation tests.
 
 ---
 # Permutation Tests
@@ -2085,7 +2074,7 @@ densityplot(permustats(ano), pch=16, cex=0.6, col=1, layout=c(1,3), as.table=TRU
 
 - Restricted permutation allows analysis of data with dependencies
 
-- Clusters of SUS that will not move or that can be permuted with
+- Clusters of SUs that will not move or that can be permuted with
   other clusters
 
 - SUs within clusters can be permuted freely, or as one-dimensional
@@ -2167,10 +2156,10 @@ among candidates. This means trouble.
 - If we have a designed experiment, we keep and analyse all design
   variables &mdash; even if these are insignificant
 
-- If we have a strong prior theory, we keep and analyse all variabels
-  of interest &mdash; even those that prove to be insignficant
+- If we have a strong prior theory, we keep and analyse all variables
+  of interest &mdash; even those that prove to be insignificant
 
-- In explanatory analysis we choose the variables among candidates,
+- In exploratory analysis we choose the variables among candidates,
   and normally want all kept variables be significant
 
 - The problem is that there may be several different sets of
@@ -2178,7 +2167,7 @@ among candidates. This means trouble.
 
 - In particular when explanatory variables are correlated, there may
   be several alternative good choices, and picking one of correlated
-  variables can have cascading effects
+  variables can have cascading effects on later choices
 
 - Automatic procedures of model choice are popular but dangerous,
   unstable and biased
@@ -2217,6 +2206,15 @@ text(mdown, dis="bp", col=1, cex=1.2, xpd=TRUE)
 set.seed(4711)
 anova(mup, by="term")
 ```
+
+- **Forward selection:** variables are added as long as they improve
+    the model with all previously selected variables
+
+- Similar to sequential tests for terms
+
+- Aluminum was the first choice: it correlates with many other
+  variables and this makes it a good surrogate
+
 ]]
 
 .pull-right[
@@ -2225,6 +2223,15 @@ anova(mup, by="term")
 set.seed(4711)
 anova(mdown, by="margin")
 ```
+
+- **Backward elimination:** variables are removed if they do not have
+    a unique importance
+
+- Similar to marginal tests for terms
+
+- Aluminum was one of the first dropped: it correlates with many other
+  variables and has no unique contribution
+
 ]]
 
 ---
@@ -2327,7 +2334,7 @@ constraints.
   first and subject residuals to constrained ordination: This gives us
   **partial ordination**
 
-- The terms partialled out are called conditions
+- **Conditions:** The terms partialled out
 
 - The conditions can be background variables or confounding factors
   that we want to remove before analysing the effects of variables of
@@ -2340,7 +2347,7 @@ constraints.
 
   - Use *Plot* as a partialled out factor in split-plot designs
 
-  - Remove uninteresting environmental variation before focusing on
+  - Remove uninteresting environmental variation before focussing on
     the interesting variables
 
 ---
