@@ -697,7 +697,7 @@ data, CA is usually a much better alternative than PCA.
 
 - We first scale the observed data so that their sum is one
   $\left( \sum_{i=1}^N \sum_{j=1}^S y_{ij} = 1 \right)$
-  &mdash; that is, we divide data with its total
+  &mdash; that is, we divide data with their total
 
 - If all communities have identical species composition, and all
   species occur in equal proportion in all SUs, then the expected
@@ -833,9 +833,13 @@ par(mar=c(4,4,0.9,0.5)+.1, mfrow=c(2,2))
 palette(viridis(8))
 mod <- cca(dune)
 with(dune, tmp <- ordisurf(mod ~ Poaprat, bubble=2, family=quasipoisson, knots=2, col=6, scaling="si", main="Poa pratensis"))
+abline(h=0, v=0, lty=3)
 with(dune, tmp <- ordisurf(mod ~ Trifrepe, bubble=2, family=quasipoisson, knots=2, col=6, scaling="si", main="Trifolium repens"))
+abline(h=0, v=0, lty=3)
 with(dune, tmp <- ordisurf(mod ~ Lolipere, bubble=2, family=quasipoisson, knots=2, col=6, scaling="si",main="Lolium perenne"))
+abline(h=0, v=0, lty=3)
 with(dune, tmp <- ordisurf(mod ~ Juncarti, bubble=2, family=quasipoisson, knots=2, col=6, scaling="si", main="Juncus articulatus"))
+abline(h=0, v=0, lty=3)
 ```
 ]
 
@@ -1040,7 +1044,7 @@ ef$vectors
 .pull-left[
 
 - For one factor we can show its value for each point (and with tricks
-  for two)
+  for two or three factors)
 
 - The mean location or the **centroid** can be shown for several factors
 
@@ -1169,7 +1173,7 @@ multidimensional scaling.
   SUs $i$ and $k$ is $y_{ij}-y_{kj}$ which is the *leg* or *cathetus* of a
   right-angled triangle, and the *squared* Euclidean distance of these two SUs
   over all *catheti* (species) is the squared *hypotenuse*
-  $d_{ik}^2 = \sum_{j=1}^S (y_{ij}-y_{kj})^2$.
+  $d_{ik}^2 = \sum_{j=1}^S (y_{ij}-y_{kj})^2$
 
 - It makes no sense to use Euclidean distances in PCoA, because PCA
   will give the same result more easily, but we can use other
@@ -1255,8 +1259,8 @@ Reindeer Pastures, $\beta$-diversity, size Shannon $H'$
   species to the dissimilarities
 
 - Here we use Rao distance which is one of many phylogenetic
-  dissimilarity indices (and they can equally well be used for related
-  functional traits etc.)
+  dissimilarity indices (and they can equally well be used for
+  functional traits *etc.*)
 
 - We put a limit: If species have diverged more than 65 Myr ago, they
   are regarded as completely independent
@@ -1354,7 +1358,7 @@ Oribatid mites: 2-dim CA of $\chi$-distances
 - Rank-order similar: if *observed dissimilarity* $d_{a} < d_{b}$ then
   Euclidean *ordination distance* $\delta_{a} < \delta_{b}$
   
-- The rank orders of observed dissimilarities cannot be exactly
+- Rank orders of observed dissimilarities cannot be exactly
   preserved by rank-orders of ordination distances in low-dimensional
   solutions, and this causes **stress**
 
@@ -1449,9 +1453,8 @@ Euclidean distances between points in the ordination
       distances between points &mdash; and these do not depend on the
       directions of the axes
 
-    - For convenience NMDS axes are often rotated to Principal
-      Components, but they can be rotated to be parallel to
-      environmental variables or any other direction
+    - Alternatively NMDS can be rotated parallel to environmental
+      variables
 
 - What is in common is that NMDS and Eigenvector methods (PCA, CA, PCoA)
   have **metric ordination space** that can be interpreted in the same way
