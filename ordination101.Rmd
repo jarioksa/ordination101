@@ -1281,7 +1281,7 @@ abline(h=65, col=4)
 Data for Tree: Zanne *et al* (2014), *Nature* **506,** 89&mdash;92.
 ]
 ---
-# Example 2: Phylogenetic distance
+# Example 2: Phylogenetic Distance
 
 ```{r fig.width=11}
 palette(viridis(8))
@@ -1537,7 +1537,7 @@ stressplot(m4, l.col=2, p.col="white",bg=6,pch=21, main="NMDS: Bray-Curtis / Wis
   and tundra steppes (*Artemisia*) before going to secular heath and
   forest succession
 
-- All other methods had a curve that hid the pioneer cycle
+- All other methods had a curve that hid the periglacial pioneer cycle
 
 ]
 
@@ -1591,6 +1591,8 @@ the analysis of designed experiments.
 
 - In constrained ordination we build the ordination so that it can be
   explained with the environmental variables (constraints)
+
+- We use external variables, and we can test their significance
 
 ---
 # From Regression to Constrained Ordination
@@ -1930,7 +1932,7 @@ mmite <- rda(decostand(mite, "hell") ~ WatrCont + SubsDens + Topo + Shrub,
 cal <- calibrate(mmite)[,"WatrCont"]
 plot(cal ~ WatrCont, mite.env, xlab="Observed WatrCont", ylab="WatrCont Predicted from WA scores", pch=21, col="white", bg=4, cex=1.2)
 abline(0, 1, lwd=3, col=1)
-legend("topleft", "Identity", lty=1, lwd=3, col=1, bty="n")
+legend("topleft", "Exact Prediction", lty=1, lwd=3, col=1, bty="n")
 ```
 .small[`r deparse(mmite$call)`]
 ]
@@ -1951,9 +1953,9 @@ normal parametric tests, but we must use permutation tests.
 - The goodness of ordination solution is analysed using similar
   $F$-statistic as in ordinary ANOVA
 $$F = \frac{\Lambda_k/p}{\Lambda_r/(n-p-1)}$$
-  where $\Lambda_k$ is the constrained inertia explained by $p$ constrained
-  axes, $\Lambda_r$ is the inertia of residuals, and $n$ is the number of
-  SUs
+  where $\Lambda_k$ is the constrained inertia explained by $p$
+  constraints, $\Lambda_r$ is the inertia of residuals, and $n$ is
+  the number of SUs
 
 - The total inertia $\Lambda$ (variance, $\chi^2$, squared
   dissimilarities) is decomposed as $\Lambda = \Lambda_k + \Lambda_r$
@@ -2068,7 +2070,7 @@ densityplot(permustats(ano), pch=16, cex=0.6, col=1, layout=c(1,3), as.table=TRU
 ]
 
 ---
-# Restricted permutations
+# Restricted Permutations
 
 .pull-left[
 
