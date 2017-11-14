@@ -1566,9 +1566,9 @@ structure, and interpreted the results via fitting environmental
 variables to the ordination. In constrained ordination we derive the
 result directly through environmental variables (constraints) and find
 only that structure in the communities that can be explained with
-constraints. The results explain a smaller propotion of total
+constraints. The results explain a smaller proportion of total
 variation than unconstrained ordination, but they are more strongly
-interpretable with the constraints. Constrained ordination is allows
+interpretable with the constraints. Constrained ordination allows
 for statistical testing of the constraints, and it is most useful in
 the analysis of designed experiments.
 
@@ -1592,7 +1592,7 @@ the analysis of designed experiments.
 - In constrained ordination we build the ordination so that it can be
   explained with the environmental variables (constraints)
 
-- We use external variables, and we can test their significance
+- We use external variables, and we can test their significances
 
 ---
 # From Regression to Constrained Ordination
@@ -1610,7 +1610,7 @@ the analysis of designed experiments.
   variable, and find the linear combination that has the smallest
   residual variation for all species
 
-- We use the same linear combination for all species and that is the
+- Use the same linear combination for all species and that is the
   first constrained ordination axis
 
 - This directly gives *regression coefficients* for environmental
@@ -1689,13 +1689,13 @@ for(i in 1:3) {
   - It was $\Lambda_k=$ `r round(cmod$CCA$tot.chi, 1)`, and the first
     axis explained $\lambda_1=$ `r round(cmod$CCA$eig[1], 1)`
 
-- We had two constraints (Al & P) and therefore we had two constrained
+- We had two constraints (`Al` & `P`) and therefore we had two constrained
   axes: the **rank** of constraints was 2
 
 - Both methods gave the same two constrained axes and the same
   eigenvalues (explained variance)
 
-- The sum of first two unconstrained eigenvalues was
+- The sum of first two *un*constrained eigenvalues was
   `r round(sum(rda(bott0)$CA$eig[1:2]), 1)` which is more than
   constrained $\Lambda_k$
 
@@ -1795,14 +1795,33 @@ class: inverse center middle
 par(mar=c(4,4,0,1)+.1)
 palette(viridis(8))
 mrda <- rda(varespec ~ Al + P, varechem)
+plot(mrda, dis=c("wa","bp"), type="n")
+points(mrda, dis="wa", pch=21, bg=8, col=1)
+points(mrda, dis="lc", pch=21, bg=4, col=1)
+text(mrda, dis="bp", col=1, lwd=2)
+ordisurf(mrda ~ Al, varechem, add=T, knots=1, col=5, display="lc")
+ordisurf(mrda ~ P, varechem, add=T, knots=1,col=5, display="lc")
+legend("bottomleft", c("LC","WA"), pch=21, pt.bg=c(8,4))
+```
+Complete Reindeer Pasture Data 
+]
+
+---
+# LC Scores Are Constraints
+
+```{r bpxy, results=FALSE, fig.width=11}
+par(mar=c(4,4,0,1)+.1, mfrow=c(1,2))
+palette(viridis(8))
 plot(mrda, dis=c("lc","bp"), type="n")
 points(mrda, dis="lc", pch=21, bg=4, col=1)
 text(mrda, dis="bp", col=1, lwd=2)
 ordisurf(mrda ~ Al, varechem, add=T, knots=1, col=5, display="lc")
 ordisurf(mrda ~ P, varechem, add=T, knots=1,col=5, display="lc")
+xy <- varechem[, c("Al","P")]
+plot(xy, pch=21, bg=4, col=1)
+ordisurf(xy ~ Al, varechem, add=T, knots=1, col=5)
+ordisurf(xy ~ P, varechem, add=T, knots=1,col=5)
 ```
-Complete Reindeer Pasture Data
-]
 
 ---
 # Factor Constraints
@@ -1847,7 +1866,8 @@ signif(contrasts(dune.env$Moisture), 4)
 - The types of contrasts do not influence the centroids, and we rarely
   need to know the exact type of contrasts used
 
-  - Contrasts are internal to the program
+  - Contrasts are internal to the program, and there rarely is reason
+    to show them in graphics
 
 ]
 
@@ -1864,7 +1884,7 @@ text(m, dis="cn", col=2, xpd=T, scaling="si")
 ]
 
 ---
-# LC or WA Scores?
+# LC and WA Scores for Factors
 
 .pull-left[
 
@@ -1934,7 +1954,7 @@ plot(cal ~ WatrCont, mite.env, xlab="Observed WatrCont", ylab="WatrCont Predicte
 abline(0, 1, lwd=3, col=1)
 legend("topleft", "Exact Prediction", lty=1, lwd=3, col=1, bty="n")
 ```
-.small[`r deparse(mmite$call)`]
+.small[`r deparse(mmite$call, width.cutoff=500)`]
 ]
 
 ---
@@ -1988,8 +2008,8 @@ ano
 ```
 ]
 
-- Management has 4 factor levels and uses 3 contrasts, Moisture is a
-  4-level ordered factor and uses 3 contrasts, and A1 is continuous
+- `Management` has 4 factor levels and uses 3 contrasts, `Moisture` is a
+  4-level ordered factor and uses 3 contrasts, and `A1` is continuous
   variable, and together these use 7 degrees of freedom, and the total
   inertia is `r round(mano$tot.chi, 3)` giving
 
@@ -2022,7 +2042,7 @@ set.seed(4711)
 ```
 ]
 
-- Sequential: Explains residuals of the previous terms
+- **Sequential:** Explains residuals of the previous terms
 
 - Order-dependent
 
@@ -2050,7 +2070,7 @@ set.seed(4711)
 ```
 ]
 
-- Marginal: Explains residuals after all other terms
+- **Marginal:** Explains residuals after all other terms
 
 - Order-independent
 
@@ -2082,7 +2102,7 @@ densityplot(permustats(ano), pch=16, cex=0.6, col=1, layout=c(1,3), as.table=TRU
 - SUs within clusters can be permuted freely, or as one-dimensional
   series or as spatial grids, and these can be mirrorred
 
-- Permutations can be constant or variable within clusters
+- Permutations can be constant or vary within clusters
 
 - For instance, Barro Colorado Island Rainforest plots are in
   contiguous grid, and free permutation breaks spatial structure
@@ -2214,7 +2234,7 @@ anova(mup, by="term")
 
 - Similar to sequential tests for terms
 
-- Aluminum was the first choice: it correlates with many other
+- `Al` was the first choice: it correlates with many other
   variables and this makes it a good surrogate
 
 ]]
@@ -2231,7 +2251,7 @@ anova(mdown, by="margin")
 
 - Similar to marginal tests for terms
 
-- Aluminum was one of the first dropped: it correlates with many other
+- `Al` was one of the first dropped: it correlates with many other
   variables and has no unique contribution
 
 ]]
@@ -2324,7 +2344,8 @@ class: inverse center middle
 
 We can use constraints in two stages: We first remove the effects of
 some some background variables and then analyse the residuals with
-constraints.
+constraints. We can also decompose total variation into several
+sources of explanatory variables.
 
 ---
 # Partial Ordination
@@ -2370,10 +2391,10 @@ pmod <- rda(pyrifos ~ dose*week + Condition(week))
 - Zooplankton has a natural annual succession, but we want to partial
   out that effect to see the effect of insecticide
 
-- The interesting variable is the insecticide dose $\times$ time
-  interaction, but the main effect of time will be aliased out from
+- The interesting variable is the insecticide `dose*time`
+  interaction, but the main effect of `time` will be aliased out from
   the model because it was already used as a condition and partialled
-  out
+  out, leaving us `dose + dose:time` 
 
 - In mixed effect models we would use ditch as a random effect, but it
   cannot be used as a condition, because the insecticide treatment is
@@ -2422,9 +2443,92 @@ lset <- trellis.par.get("superpose.symbol")
 lset$col <- viridis(7)
 trellis.par.set("superpose.symbol", lset)
 ordixyplot(mod, form = PC2 ~ PC1|dose, groups=ditch, type=c("p","arrows"),
-  len=0.05, as.table=TRUE, lwd=2, pch=16, cex=0.5)
+  len=0.05, as.table=TRUE, lwd=2, pch=16, cex=0.5, scaling="site")
 ```
 Unconstrained PCA for the Pyrifos experiment
+]
+
+---
+# Partial Model: Only for Numbers?
+
+.pull-left[
+
+- Complicated partial models are often useless as graphics
+
+- Their main use may be in statistical testing of multivariate
+  observations with non-parmetric permutation
+
+- In the Pyrifos example, the partial ordination shows that doses of
+  insecticide treatment are located in different parts of the
+  ordination, but the temporal cycles are not different
+
+  - The model shows the `dose:time` interaction instead of `time`
+
+]
+
+.pull-right[
+```{r pyriprda}
+par(mar=c(4,4,0,0)+.1)
+trellis.par.set("strip.background", lstrip)
+lset <- trellis.par.get("superpose.line")
+lset$col <- viridis(7)
+trellis.par.set("superpose.line", lset)
+lset <- trellis.par.get("superpose.symbol")
+lset$col <- viridis(7)
+trellis.par.set("superpose.symbol", lset)
+ordixyplot(pmod, form = RDA1 ~ RDA2|dose, groups=ditch, type=c("p","arrows"),
+  len=0.05, as.table=TRUE, lwd=2, pch=16, cex=0.5, scaling="site")
+```
+Partial RDA for the Pyrifos experiment
+]
+
+---
+
+# Partitioning of Variation
+
+- Partial ordination decomposes total variation $\Lambda$ into
+  variation partialled out $\Lambda_p$, residual explained variation
+  $\Lambda_k$ and into residuals $\Lambda_r$
+
+- Sometimes we are interested in the relative magnitude of several
+  sources of variation
+
+- That variation can be variance (RDA), $\chi^2$ (CCA) or derived from
+  squared dissimilarties (dbRDA)
+
+- The proportional variation of a component is
+  $R^2 = \Lambda_k/\Lambda$ &mdash; which really is the squared correlation
+  coefficient
+
+- $R^2$ is biased: even random data have $R^2>0$, and when you add
+  terms, $R^2$ can only improve, and therefore we use adjusted $R^2$
+  that has expected value $R^2 = 0$ in random data
+
+- We can have several components of variation
+
+- These sources are decomposed into their unique effect and effects
+  shared with other sources of variation
+
+---
+
+# Partitioning of Variation: Pyrifos
+
+.pull-left[
+.small[
+```{r varpart, echo=FALSE}
+vp <- varpart(pyrifos, ~week, ~dose)
+vp
+```
+]
+]
+
+.pull-right[
+```{r varpartplot}
+par(mar=c(4,4,0,1)+.1)
+palette(viridis(8))
+plot(vp, bg = c(4,7), Xnames=c("Time", "Dose"))
+
+```
 ]
 
 ---
