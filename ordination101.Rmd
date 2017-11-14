@@ -2405,20 +2405,24 @@ pmod <- rda(pyrifos ~ dose*week + Condition(week))
   constant series within ditch
 
 .small[
-```{r echo=FALSE, dependson='setpyrifos'}
+```{r pyriano, echo=FALSE, dependson='setpyrifos'}
 anova(pmod, permutations=ctrl, parallel=2)
 ```
 ]]
 
 .pull-right[
 ```{r pyripca}
-par(mar=c(4,4,0,1)+.1)
-palette(viridis(5))
+par(mar=c(4,4,0,0)+.1)
 mod <- rda(pyrifos)
-plot(mod, dis="si", scaling="si", type="n")
-points(mod, dis="si", scaling="si", pch=16, cex=0.8, col=dose)
-ordiarrows(mod, ditch, col=dose, scaling="si", lwd=2)
-legend("topright", levels(dose), pch=16, lty=1, lwd=2, col=1:5, title="Pyrifos Dose") 
+trellis.par.set("strip.background", lstrip)
+lset <- trellis.par.get("superpose.line")
+lset$col <- viridis(7)
+trellis.par.set("superpose.line", lset)
+lset <- trellis.par.get("superpose.symbol")
+lset$col <- viridis(7)
+trellis.par.set("superpose.symbol", lset)
+ordixyplot(mod, form = PC2 ~ PC1|dose, groups=ditch, type=c("p","arrows"),
+  len=0.05, as.table=TRUE, lwd=2, pch=16, cex=0.5)
 ```
 Unconstrained PCA for the Pyrifos experiment
 ]
