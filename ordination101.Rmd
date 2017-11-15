@@ -1833,7 +1833,7 @@ ordisurf(xy ~ Al, varechem, add=T, knots=1, col=5)
 ordisurf(xy ~ P, varechem, add=T, knots=1,col=5)
 ordilabel(xy, fill=8, col=2)
 ```
-
+§
 ---
 # Factor Constraints
 
@@ -1872,7 +1872,7 @@ signif(contrasts(dune.env$Moisture), 4)
 - Factors are displayed by the centroids of their levels
 
 - The ordered factors can be described by biplot arrows for their
-  polynomial contrasts in addition to the centroid
+  polynomial contrasts in addition to their centroids
 
 - The types of contrasts do not influence the centroids, and we rarely
   need to know the exact type of contrasts used
@@ -2246,7 +2246,7 @@ anova(mup, by="term")
 - Similar to sequential tests for terms
 
 - `Al` was the first choice: it correlates with many other
-  variables and this makes it a good surrogate
+  variables and this makes it a good surrogate for them all
 
 ]]
 
@@ -2415,7 +2415,7 @@ pmod <- rda(pyrifos ~ dose*week + Condition(week))
 - Observations are repeated over weeks, and therefore we use series
   permutation within each ditch
 
-- Time goes only forward and simultaneously in all plots, and
+- Time goes only forward and simultaneously in all ditches, and
   therefore we use no mirrorring and have the same permutation within
   each ditch
 
