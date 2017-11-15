@@ -1799,9 +1799,19 @@ plot(mrda, dis=c("wa","bp"), type="n")
 points(mrda, dis="wa", pch=21, bg=8, col=1)
 points(mrda, dis="lc", pch=21, bg=4, col=1)
 text(mrda, dis="bp", col=1, lwd=2)
-ordisurf(mrda ~ Al, varechem, add=T, knots=1, col=5, display="lc")
-ordisurf(mrda ~ P, varechem, add=T, knots=1,col=5, display="lc")
-legend("bottomleft", c("LC","WA"), pch=21, pt.bg=c(8,4))
+Alfit <- ordisurf(mrda ~ Al, varechem, plot=FALSE, knots=1, display="lc")
+Pfit <- ordisurf(mrda ~ P, varechem, plot=FALSE, knots=1,display="lc")
+xy <- scores(mrda, dis="wa", choices=1:2)
+xn1 <- seq(min(xy[,1]), max(xy[,1]), len=31)
+xn2 <- seq(min(xy[,2]), max(xy[,2]), len=31)
+xy <- data.frame(expand.grid(x1=xn1, x2=xn2))
+fit <- predict(Alfit, newdata=xy)
+dim(fit) <- c(31,31)
+contour(xn1, xn2, fit, add=TRUE, col=5)
+fit <- predict(Pfit, newdata=xy)
+dim(fit) <- c(31,31)
+contour(xn1, xn2, fit, add=TRUE, col=5)
+legend("bottomleft", c("LC","WA"), pch=21, pt.bg=c(8,4), bg="white")
 ```
 Complete Reindeer Pasture Data 
 ]
@@ -1813,14 +1823,15 @@ Complete Reindeer Pasture Data
 par(mar=c(4,4,0,1)+.1, mfrow=c(1,2))
 palette(viridis(8))
 plot(mrda, dis=c("lc","bp"), type="n")
-points(mrda, dis="lc", pch=21, bg=4, col=1)
-text(mrda, dis="bp", col=1, lwd=2)
 ordisurf(mrda ~ Al, varechem, add=T, knots=1, col=5, display="lc")
 ordisurf(mrda ~ P, varechem, add=T, knots=1,col=5, display="lc")
+ordilabel(mrda, dis="lc", fill=8, col=2)
+text(mrda, dis="bp", col=1, lwd=2)
 xy <- varechem[, c("Al","P")]
-plot(xy, pch=21, bg=4, col=1)
+plot(xy, type="n")
 ordisurf(xy ~ Al, varechem, add=T, knots=1, col=5)
 ordisurf(xy ~ P, varechem, add=T, knots=1,col=5)
+ordilabel(xy, fill=8, col=2)
 ```
 
 ---
