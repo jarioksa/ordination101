@@ -1811,7 +1811,7 @@ contour(xn1, xn2, fit, add=TRUE, col=5)
 fit <- predict(Pfit, newdata=xy)
 dim(fit) <- c(31,31)
 contour(xn1, xn2, fit, add=TRUE, col=5)
-legend("bottomleft", c("LC","WA"), pch=21, pt.bg=c(8,4), bg="white")
+legend("bottomleft", c("LC","WA"), pch=21, pt.bg=c(4,8), bg="white")
 ```
 Complete Reindeer Pasture Data 
 ]
@@ -2553,7 +2553,7 @@ class: inverse center bottom
 
 ---
 .small[
-```{r end, echo=FALSE}
+```{r end, echo=FALSE, cache=FALSE}
 options(width=132)
 sessionInfo()
 ``` 
