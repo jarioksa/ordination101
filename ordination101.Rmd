@@ -277,7 +277,7 @@ is  linear, but  community  data are  nonlinear.
 ---
 # 3 Cryptogams in Reindeer Pastures
 
-```{r bottpredict, fig.width=8, fig.height=5.5}
+```{r bottpredict, fig.width=8, fig.height=5.4}
 bott <- varespec[, c("Pleuschr","Cladrang","Cladstel")]
 bott0 <- scale(bott, scale = FALSE)
 par(mar=c(4,4,0,1)+.1)
@@ -1077,7 +1077,7 @@ legend("topright", levels(dune.env$Management), pch=21, pt.bg=viridis(4), title 
 ---
 ## Displaying Factors
 
-```{r factorshow, fig.width=8, fig.height=5.6}
+```{r factorshow, fig.width=8, fig.height=5.4}
 par(mar=c(3,4,0.8,1)+.1, mfrow=c(2,2))
 palette(viridis(8))
 plot(mod, dis="si", type="n", main="Spider")
@@ -1653,7 +1653,7 @@ for(i in 1:3) {
 ---
 # Method 2: Ordination of Fitted Values
 
-```{r rdamethod2a, fig.width=8, fig.height=5.5}
+```{r rdamethod2a, fig.width=8, fig.height=5.4}
 par(mar=c(4,4,0,1)+.1)
 palette(viridis(8))
 pairs(fitted(cmod), pch=16, col=4, ylim=range(fitted(cmod)), panel=panel.lm)
