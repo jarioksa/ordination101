@@ -1005,11 +1005,6 @@ abline(h=0, v=0, lty=3)
 plot(envfit(vmod ~ N, varechem), col=1, cex=1, bg=8)
 ```
 
-]
-
-.pull-right[
-]
-
 ---
 # Significance tests
 
@@ -1833,7 +1828,6 @@ ordisurf(xy ~ Al, varechem, add=T, knots=1, col=5)
 ordisurf(xy ~ P, varechem, add=T, knots=1,col=5)
 ordilabel(xy, fill=8, col=2)
 ```
-§
 ---
 # Factor Constraints
 
