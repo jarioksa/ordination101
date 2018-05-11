@@ -13,10 +13,10 @@ they are **not** about **R** and **vegan**, but about ordination
 they are generated with **R** when these files are built from sources.  
 
 The slides should be processed with `knitr::render()` to produce an
-`html` file (see `Makefile`). The slides require a **github** version
-of **vegan** (2.5-0), and they also need package **natto** that is
-only available in **github**. It is most practical to install
-**devtools** package to install these packages from **github**. Other
+`html` file (see `Makefile`). The slides require a current **CRAN**
+version of **vegan** (2.5-1), and they also need package **natto**
+that is only available in **github**. It is most practical to install
+**devtools** package to install the packages from **github**. Other
 packages used are **analogue**, **labdsv**, **mgcv** for data and
 analyses and **knitr** and **viridis** for building slides. All these
 are in **CRAN**.
