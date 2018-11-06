@@ -18,5 +18,5 @@ version of **vegan** (2.5-1), and they also need package **natto**
 that is only available in **github**. It is most practical to install
 **devtools** package to install the packages from **github**. Other
 packages used are **analogue**, **labdsv**, **mgcv** for data and
-analyses and **knitr** and **viridis** for building slides. All these
-are in **CRAN**.
+analyses and **rmarkdown**, **knitr**, **xaringan** and **viridis** 
+for building slides. All these are in **CRAN**.
