@@ -2,7 +2,7 @@
 title: "Basic Ordination Methods"
 subtitle: "Ordination for Ecological Methods"
 author: "Jari Oksanen"
-date: "Nov 8 to 15, 2017"
+date: "Nov 12 to 21, 2018"
 output:
   xaringan::moon_reader:
     css: ['default', './resources/gavins.css']
@@ -43,7 +43,7 @@ Source files of these slides are [in github](https://github.com/jarioksa/ordinat
 
 <a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.
 
-© Jari Oksanen 2017
+© Jari Oksanen 2017--2018
 
 This version was built on `r date()`
 
