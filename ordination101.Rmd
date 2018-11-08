@@ -39,11 +39,13 @@ library('mgcv')
 require('knitr')
 require('viridis')
 ```
+class: bottom
+
 Source files of these slides are [in github](https://github.com/jarioksa/ordination101).
 
 <a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.
 
-© Jari Oksanen 2017--2018
+© Jari Oksanen 2017&mdash;2018
 
 This version was built on `r date()`
 
@@ -52,8 +54,8 @@ This version was built on `r date()`
 # This Is Ordination
 
 .center[
-```{r whatisthis, fig.height=5.3}
-par(mar=c(4,4,0,0)+.1)
+```{r whatisthis}
+par(mar=c(4,4,0,0)+ .1)
 palette(viridis(8))
 foo <- cca(varespec ~ Al + P + K, varechem)
 plot(foo, type="n")
@@ -72,9 +74,9 @@ class: inverse center middle
 - Ordination methods are multivariate graphical tools to display
   multivariate data
 
-- Multivariate data have several variables on several sampling
-  units (SU), and such data are best analysed with multivariate
-  methods
+- *Multivariate data* have several variables and several sampling
+  units (SU), and such data are best analysed with
+  *multivariate methods*
 
 - We do not have one obvious dependent variable in multivariate data,
   but we would still want to understand the major features of the data
@@ -83,7 +85,7 @@ class: inverse center middle
     analysis in sampling units, measurements of chemical and physical
     conditions in sampling stations *etc*
 
-- If we have a clear hypothesis with a clear dependent variable, it is
+- If we have a clear hypothesis with one dependent variable, it is
   better to use univariate methods
 
 - Sometimes we can summarize multiple variables into one indicator
@@ -164,7 +166,7 @@ plot(ef, col=3, p.=0.05)
 
   - *Private:* we do it, but we do not tell anybody what we do in our privacy
 
-  - Ordination need not be published or shown to anyone to be useful to you
+  - Ordination need not be published or shown to anyone to be useful for you
 
 - Sometimes we can build rigorous tests on ordination results: these
   summarize the major structure and allow using simpler test
@@ -204,7 +206,7 @@ plot(ef, col=3, p.=0.05)
   interrupt me and ask as soon as you get lost
 
 ---
-# The Structure of These Lectures
+# The Structure of These Lectures I
 
 In the first part of lectures I describe four main basic ordination
 methods:
@@ -229,12 +231,12 @@ methods:
   parameters and other environmental conditions
 
 ---
-# The Structure of These Lectures
+# The Structure of These Lectures II
 
 In the latter part of lectures I describe how to use external
-environmental variables in constraining ordination. These are
-particularly useful if we have controlled experiment and we want to
-analyse the statistical significance of multivariate response. Even
+environmental variables to *constrain* ordination. These methods are
+useful if we have a controlled experiment and we want to
+analyse the statistical significance of multivariate responses. Even
 with survey data, the use of external variables can make
 interpretation much easier. Some of the main themes are:
 
@@ -267,6 +269,9 @@ is  linear, but  community  data are  nonlinear.
 - What is the best possible predictor variable for a species? --- It
   is the species itself!
 
+  - If you predict values of $y$ with $y$, you get a perfect fit and
+    explain $y$ completely (but what about other species?)
+
 - Some species can also be powerful in predicting abundances of
   other species
 
@@ -276,11 +281,11 @@ is  linear, but  community  data are  nonlinear.
 - That linear combination is the first PCA axis
 ---
 # 3 Cryptogams in Reindeer Pastures
-
-```{r bottpredict, fig.width=8, fig.height=5.4}
+ 
+```{r bottpredict, fig.width=8, fig.height=5}
 bott <- varespec[, c("Pleuschr","Cladrang","Cladstel")]
 bott0 <- scale(bott, scale = FALSE)
-par(mar=c(4,4,0,1)+.1)
+par(mar = c(4,4,0,1)+.1)
 palette(viridis(8))
 panel.lm <- function(x, y, col.smooth = 1, tcex=1.5, ...)
 {
@@ -295,14 +300,14 @@ pairs(bott0, pch=16, col = 4, ylim = range(bott0), panel = panel.lm)
 ```
 ---
 # Best Predictor
-```{r bottpc1, fig.width=10, fig.height=4}
+```{r bottpc1, fig.width=9.5, fig.height=4}
 mod <- rda(bott0)
 koef <- mod$CA$v[,1]
 xlab = paste(formatC(koef,digits=2, flag="+"), names(koef), sep="*",collapse="")
 PC1 <- (bott0 %*% mod$CA$v)[,1]
 df <- data.frame(bott0)
 palette(viridis(8))
-par(mar=c(4,4,0,1)+.1, mfrow=c(1,3))
+par(mar = c(4,4,0,1)+.1, mfrow=c(1,3))
 ylim <- range(bott0)
 plot(Pleuschr ~ PC1, df, type="n", ylim=ylim, xlab=xlab, cex.lab=1.2)
 panel.lm(PC1, df$Pleuschr, pch=16, col=2, col.smooth=4)
@@ -313,12 +318,14 @@ panel.lm(PC1, df$Cladstel, pch=16, col=2, col.smooth=4)
 
 ```
 ---
-# What Was Explained?
+# What was Explained?
 
 - PCA explains the **variance** of the data: the squared
   differences between observed values $y$ and species means $\bar y$:
   $\mathrm{Var}(y_j) = \sum_{i=1}^N(y_{ij} - \bar y_j)^2/(N-1)$
-  - NB., ordination always centres data so that $\bar y = 0$
+  - NB., ordination always centres data so that species means $\bar y = 0$
+  
+  - The total variance (sum of species variance) is called **inertia**
 
 - In the example, the variances of three species were
   `r round(apply(bott0, 2, var), 1)`, with sum
@@ -356,7 +363,7 @@ panel.lm(PC1, df$Cladstel, pch=16, col=2, col.smooth=4)
     which is  `r round(100*mod$CA$eig[2]/mod$tot.chi, 1)`% of total variance
 
 - The sum of all $K$ eigenvalues is equal to the variances of all
-   species $\sum_{k=1}^K \lambda_k = \sum_{j=1}^S \mathrm{Var}(y_j)$:
+   species (inertia) $\sum_{k=1}^K \lambda_k = \sum_{j=1}^S \mathrm{Var}(y_j)$:
    The axes decompose variance into independent ordered components
 
 - In modern software, we do not find second and further PCs one-by-one
@@ -366,7 +373,7 @@ panel.lm(PC1, df$Cladstel, pch=16, col=2, col.smooth=4)
 ---
 # Is This Circular?
 
-- We explain species by species &mdash; and this sounds badly circular
+- We explain species with species &mdash; and this sounds badly circular
 
 - We perform no statistical testing, and what looks regression
   actually is **rotation** of species data
@@ -417,7 +424,7 @@ tmp <- ordisurf(mod ~ Cladstel, df, add = TRUE, col=4, knots=1)
 
 .pull-left[
 
-- In the origin, each species occurs at its average abundance $\bar y_j$
+- In the origin, all species occurs at their average abundances
 
 - The further away from the origin SU is situated, the more strongly
   species abundances differ from the average
@@ -446,7 +453,7 @@ biplot(mod, col=c(4,1))
 
 .pull-left[
 
-- In species space every species is an axis
+- In **species space** every species is an *axis* (or a *dimension*)
 
 - Each axis is at right angle against all other axes
 
@@ -455,8 +462,11 @@ biplot(mod, col=c(4,1))
 
 - There can be a huge number of species axes, and we cannot see them all
 
-- We rotate the species space so that we see as much as possible from the 
+- We rotate the species space so that we see as much as possible of the 
   locations of the points: This is the **PCA!**
+
+- Originally we had a *species*-dimensional space, and we *reduce* it
+  to two or three dimensional space
 
 ]
 
@@ -473,7 +483,8 @@ ordiplot3d(bott0, mar=c(4,4,0,2), angle=20, pch=16, col=2, ax.col=4)
 
 .pull-left[
 
-- Analysis of complete data not too different from just three species
+- Analysis of complete data is pretty similar to the analysis of these
+  three species
 
 - PCA analyses variances and shows absolute differences from the mean
   $y - \bar y$: minor species change little in absolute units
@@ -559,7 +570,7 @@ class:  inverse center middle
 ---
 # Linear Method
 
-- PCA builds upon the idea of linear regression
+- PCA builds upon the idea of *linear regression*
 
 - PC axes are sometimes called as latent variables: unknown and hidden
   real variables that we dig up from data
@@ -567,7 +578,7 @@ class:  inverse center middle
 - Community response to environmental variables is non-linear: PC axes
   cannot find such variables
 
-```{r mtfgrad, fig.width=10, fig.height=3}
+```{r mtfgrad, fig.width=9, fig.height=3}
 source('data/mtfit.R')
 palette(viridis(6))
 par(mar=c(4,4,0.4,1)+.1)
@@ -652,7 +663,7 @@ points(m3, dis="si", pch=16)
 
 - Use only the subset of correlated variables that may be assumed to
   describe the same underlying (latent) variable: **measurement
-  model**
+  model** in **Factor Analysis**
 
 - Use correlations when variables are not measured in the same units
 
@@ -791,7 +802,7 @@ tabasco(dune, cca(dune), col=viridis(5))
 
 - First CA axis preserves the correct ordering: CA is a **seriation method** 
 
-```{r abernethy, fig.width=8, fig.height=3.5}
+```{r abernethy, fig.width=7.5, fig.height=3.5}
 par(mar=c(4,4,0.2,1)+.1, mfrow=c(1,2))
 palette(viridis(8))
 m0 <- rda(abernethy[,1:36])
@@ -813,7 +824,7 @@ Abernethy Forest pollen data (5515 to 12145 BP)
 - CA packs species also in multidimensional space
 
 - Instead of an arrow of increase, the species score may be regarded
-  as a centre of abundance
+  as a *centre of abundance*
 
 - It is said that CA approximates the unimodal model
 
@@ -828,7 +839,7 @@ Abernethy Forest pollen data (5515 to 12145 BP)
 ]
 
 .pull-right[
-```{r cascores, fig.height=5.5}
+```{r cascores}
 par(mar=c(4,4,0.9,0.5)+.1, mfrow=c(2,2))
 palette(viridis(8))
 mod <- cca(dune)
@@ -848,8 +859,8 @@ abline(h=0, v=0, lty=3)
 
 .pull-left[
 
-- Sum of all eigenvalues $\sum_k \lambda_k = \chi^2$, and
-  $\lambda_k / \chi^2$ gives the proportion of inertia explained by the axis
+- Sum of all eigenvalues (inertia) $\sum_k \lambda_k = \chi^2$, and
+  $\lambda_k / \chi^2$ gives the proportion explained by the axis
 
 - This inertia is **not** variance but $\chi^2$, and eigenvalues or percentages
   cannot be compared with PCA
@@ -1011,12 +1022,12 @@ plot(envfit(vmod ~ N, varechem), col=1, cex=1, bg=8)
 .pull-left[
 
 - The strength of the fitted vector is given by the correlation $r$
-  (or its square $r^2$) to the direction of the coordinates of the arrow head
+  (or its square $r^2$) to the direction of the arrow head
 
 - **Permutation tests:** Rows of environmental variables are shuffled
     into random order and $r^2$ is re-calculated
 
-- The $P$-value is the probability that $r^2$ of random permutation is
+- The $P$-value is the probability that $r^2$ of randomized values is
   larger or equal to the observed value of fitted vector
 
 - If this probability is low, say $P \le 0.05$, the variable is often
@@ -1072,7 +1083,7 @@ legend("topright", levels(dune.env$Management), pch=21, pt.bg=viridis(4), title 
 ---
 ## Displaying Factors
 
-```{r factorshow, fig.width=8, fig.height=5.4}
+```{r factorshow, fig.width=8}
 par(mar=c(3,4,0.8,1)+.1, mfrow=c(2,2))
 palette(viridis(8))
 plot(mod, dis="si", type="n", main="Spider")
@@ -1112,8 +1123,8 @@ eff$factors
 ```{r confell}
 palette(viridis(8))
 par(mar=c(4,4,0.8,1)+.1)
-plot(mod, dis="si", type="n", main="95% Confidence Ellipse")
-ordiellipse(mod, dune.env$Management, kind="se", conf=0.95, draw="poly", col=viridis(4), label=TRUE, cex=1)
+plot(mod, dis="si", type="n", main="95% Confidence Ellipse, Bonferroni correction")
+ordiellipse(mod, dune.env$Management, kind="se", conf=1-0.05/6, draw="poly", col=viridis(4), label=TRUE, cex=1)
 with(dune.env, points(mod, dis="si", pch=21, bg=viridis(4)[as.numeric(Management)]))
 ```
 ]
@@ -1179,8 +1190,8 @@ multidimensional scaling.
   geometrical glitches that we can usually ignore)
 
 - All ordination methods we discuss are distance-based, and
-  eigenvector methods (PCA, CA) are based on Euclidean distances or
-  Euclidean distances of transformed data
+  eigenvector methods are based on Euclidean distances (PCA) or weighted
+  Euclidean distances of transformed data (CA)
 
 ---
 ## What is Wrong with Euclidean Distances?
@@ -1348,10 +1359,10 @@ Oribatid mites: 2-dim CA of $\chi$-distances
 - **Monotone regression**: Euclidean distances of points in the
     ordination space are **rank-order similar** to community
     dissimilarities
-    - The **ordination space** is metric, but the **regression** is non-metric
+
 
 - Rank-order similar: if *observed dissimilarity* $d_{a} < d_{b}$ then
-  Euclidean *ordination distance* $\delta_{a} < \delta_{b}$
+  Euclidean *ordination distance* $\delta_{a} \le \delta_{b}$
   
 - Rank orders of observed dissimilarities cannot be exactly
   preserved by rank-orders of ordination distances in low-dimensional
@@ -1375,13 +1386,8 @@ stressplot(mmod, l.col=2, p.col="white", bg=6, pch=21)
 ---
 ## Stress and Iterations
 
-$$\mathrm{stress} = \frac{\sum_{i \ne j}(\mathrm{monotone}(d_{ij})-\delta_{ij})^2}{\sum_{i \ne j}\delta_{ij}^2}\;,$$
-where $d$ are the calculated dissimilarities between SUs $i$ and $j$,
-$\mathrm{monotone}()$ is their monotone regression fit, and $\delta$ are the
-Euclidean distances between points in the ordination
-
-- In other words: stress is the spread of points with respect to
-  monotone regression
+- Stress is the spread of points from the
+  monotone regression step line
 
 - The ordination space is *metric* and Euclidean: the *non-metric*
   refers only to the regression used to transform observed
@@ -1399,13 +1405,13 @@ Euclidean distances between points in the ordination
   stress $< 0.1$ is extremely good, stress close to $0$ hints to
   problems (like insufficient data or disjunctions), and random
   configurations in 2D have stress about $0.4$, leaving stress $0.2$
-  as commonly very good
+  usually as very good
 
 ---
 # Advantages of NMDS
 
-- Eigenvector methods can give good ordination if the inherent
-  ordination model is similar to the model species response to
+- Eigenvector methods can give good ordination if the
+  ordination model is similar to the model of species responses to
   gradients
 
   - PCA model is linear and poor, but CA can cope with some regular
@@ -1422,7 +1428,7 @@ Euclidean distances between points in the ordination
   distances and $\chi$-distances of PCA and CA
   
   - Shares this feature with PCoA (which still applies Euclidean
-    mapping to these dissimilarities)
+    mapping of these dissimilarities)
 
 - Champion in tests with simulated data with non-regular unimodal
   species responses
@@ -1474,7 +1480,7 @@ plot(envfit(mrot ~ SubsDens + WatrCont + Shrub, mite.env), col=3, bg=8, xpd=TRUE
 ---
 ## Example: Abernethy Pollen Profile
 
-```{r abergrid, fig.width=8,fig.height=5.5, results=FALSE}
+```{r abergrid, fig.width=8, results=FALSE}
 palette(viridis(8))
 par(mar=c(4,4,0.7,1)+.1, mfrow=c(2,2))
 #x <- rbinom(prod(dim(mtfit)), 1, mtfit)
@@ -1506,7 +1512,7 @@ points(pl, "sites", pch=16, col=2)
 ---
 ## Stress Plot Indicates NMDS Does Best
 
-```{r aberstress, fig.width=8,fig.height=5.5, results=FALSE}
+```{r aberstress, fig.width=8, results=FALSE}
 par(mar=c(4,4,0.7,1)+.1, mfrow=c(2,2))
 palette(viridis(8))
 stressplot(m1, l.col=2, p.col="white",bg=6,pch=21, main="PCA: Hellinger")
@@ -1601,9 +1607,8 @@ the analysis of designed experiments.
 
 **Method 1**
 
-- Use a linear combination of constraints as the explanatory
-  variable, and find the linear combination that has the smallest
-  residual variation for all species
+- Use constraints as explanatory variables, and find their linear
+  combination that has the smallest residual variation for all species
 
 - Use the same linear combination for all species and that is the
   first constrained ordination axis
@@ -1648,7 +1653,7 @@ for(i in 1:3) {
 ---
 # Method 2: Ordination of Fitted Values
 
-```{r rdamethod2a, fig.width=8, fig.height=5.4}
+```{r rdamethod2a, fig.width=8}
 par(mar=c(4,4,0,1)+.1)
 palette(viridis(8))
 pairs(fitted(cmod), pch=16, col=4, ylim=range(fitted(cmod)), panel=panel.lm)
@@ -1768,7 +1773,7 @@ class: inverse center middle
 .pull-left[
 
 - LC scores really are linear combinations of constraints, and when
-  projected to biplot arrows, they fall on the values of constraints
+  projected onto biplot arrows, they fall on the values of constraints
 
 - When WA scores are projected onto biplot arrows, they give the
   prediction of environmental conditions from species data:
@@ -1836,7 +1841,9 @@ ordilabel(xy, fill=8, col=2)
 - Factors (categorical variables) are coded as **contrasts**
 
 - For instance, a factor with four classes is coded by three indicator
-  variables that express the difference against the corner-point case
+  variables that express the difference against the first class
+
+  - **0**: another class, **1**: same class
 
 - Ordered factors can be expressed as polynomial contrasts that
   describe the linear, quadratic, cubic *etc* effects of the variable
@@ -2104,10 +2111,10 @@ densityplot(permustats(ano), pch=16, cex=0.6, col=1, layout=c(1,3), as.table=TRU
 - Clusters of SUs that will not move or that can be permuted with
   other clusters
 
-- SUs within clusters can be permuted freely, or as one-dimensional
-  series or as spatial grids, and these can be mirrorred
+- SUs within clusters can be permuted *freely*, or as one-dimensional
+  *series* or as spatial *grids*, and these can be *mirrorred*
 
-- Permutations can be constant or vary within clusters
+- Permutations can be *constant* or *vary* in clusters
 
 - For instance, Barro Colorado Island Rainforest plots are in
   contiguous grid, and free permutation breaks spatial structure
@@ -2118,7 +2125,7 @@ densityplot(permustats(ano), pch=16, cex=0.6, col=1, layout=c(1,3), as.table=TRU
 ]
 
 .pull-right[
-```{r respermu, fig.height=4.5}
+```{r respermu, fig.height=4.3}
 par(mar=c(0,0,0,0)+.25, mfrow=c(2,1))
 palette(viridis(8))
 set.seed(4711)
@@ -2139,7 +2146,7 @@ Barro Colorado Island Rainforests (BCI): Free & Grid Permutations &mdash; colour
 
 .pull-left[
 .small[
-```{r bcifree, echo=FALSE, fig.height=3}
+```{r bcifree, echo=FALSE, fig.height=2.9}
 palette(viridis(8))
 par(mar=c(4,4,0,1)+.1)
 trellis.par.set("strip.background", lstrip)
@@ -2153,7 +2160,7 @@ ano
 
 .pull-right[
 .small[
-```{r bcigrid, echo=FALSE, fig.height=3}
+```{r bcigrid, echo=FALSE, fig.height=2.9}
 palette(viridis(8))
 par(mar=c(4,4,0,1)+.1)
 trellis.par.set("strip.background", lstrip)
@@ -2235,9 +2242,9 @@ anova(mup, by="term")
 ```
 
 - **Forward selection:** variables are added as long as they improve
-    the model with all previously selected variables
+    the model after all previously selected variables
 
-- Similar to sequential tests for terms
+- Similar to *sequential* tests for terms
 
 - `Al` was the first choice: it correlates with many other
   variables and this makes it a good surrogate for them all
@@ -2254,7 +2261,7 @@ anova(mdown, by="margin")
 - **Backward elimination:** variables are removed if they do not have
     a unique importance
 
-- Similar to marginal tests for terms
+- Similar to *marginal* tests for terms
 
 - `Al` was one of the first dropped: it correlates with many other
   variables and has no unique contribution
@@ -2373,7 +2380,7 @@ sources of explanatory variables.
 
   - Partial out initial conditions in designed experiments
 
-  - Use *Plot* as a partialled out factor in split-plot designs
+  - Partial out *Plot* in split-*plot* designs
 
   - Remove uninteresting environmental variation before focussing on
     the interesting variables
@@ -2493,9 +2500,10 @@ Partial RDA for the Pyrifos experiment
 
 - Partial ordination decomposes total variation $\Lambda$ into
   variation partialled out $\Lambda_p$, residual explained variation
-  $\Lambda_k$ and into residuals $\Lambda_r$
+  $\Lambda_k$ and into residuals $\Lambda_r$, or total inertia
+  $\Lambda = \Lambda_p + \Lambda_k + \Lambda_r$
 
-- Sometimes we are interested in the relative magnitude of several
+- Sometimes we are interested in the relative magnitudes of several
   sources of variation
 
 - That variation can be variance (RDA), $\chi^2$ (CCA) or derived from
@@ -2507,7 +2515,7 @@ Partial RDA for the Pyrifos experiment
 
 - $R^2$ is biased: even random data have $R^2>0$, and when you add
   terms, $R^2$ can only improve, and therefore we use adjusted $R^2$
-  that has expected value $R^2 = 0$ in random data
+  that has expected value $E(R^2) = 0$ in random data
 
 - We can have several components of variation
 
