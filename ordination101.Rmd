@@ -323,9 +323,9 @@ panel.lm(PC1, df$Cladstel, pch=16, col=2, col.smooth=4)
 - PCA explains the **variance** of the data: the squared
   differences between observed values $y$ and species means $\bar y$:
   $\mathrm{Var}(y_j) = \sum_{i=1}^N(y_{ij} - \bar y_j)^2/(N-1)$
-  - NB., ordination always centres data so that species means $\bar y = 0$
+  - Ordination always centres data so that species means $\bar y = 0$
   
-  - The total variance (sum of species variance) is called **inertia**
+  - The total variance (sum of species variances) is called **inertia**
 
 - In the example, the variances of three species were
   `r round(apply(bott0, 2, var), 1)`, with sum
@@ -341,7 +341,7 @@ panel.lm(PC1, df$Cladstel, pch=16, col=2, col.smooth=4)
   the **species scores** used in ordination diagrams, and they are also
   regression coefficients that project centred species abundances to
   the PC
-  - NB., ordination always centres data so that the intercept
+  - Ordination always centres data so that the intercept
   is zero
 
 - The result of this projection are the sampling unit **(SU) scores**
@@ -378,12 +378,12 @@ panel.lm(PC1, df$Cladstel, pch=16, col=2, col.smooth=4)
 - We perform no statistical testing, and what looks regression
   actually is **rotation** of species data
 
-- We only like to find a way of looking at the data so that some first
+- We only like to find a way of looking at the data so that some first axes
   (say PC1 and PC2) show as much of the variance of the data as possible
 
 - Then we can ignore the later axes and say that a **major part** of
   variation is displayed in the first dimensions that we
-  can graph
+  can plot
 
 - PCA is **not** a statistical method, but it is only a rotation of
   the data
@@ -424,10 +424,10 @@ tmp <- ordisurf(mod ~ Cladstel, df, add = TRUE, col=4, knots=1)
 
 .pull-left[
 
-- In the origin, all species occurs at their average abundances
+- In the origin, all species occur at their average abundances
 
 - The further away from the origin SU is situated, the more strongly
-  species abundances differ from the average
+  its species composition differs from the average
 
 - For species the angles between arrows indicate the similarity of
   change, and the length of the arrow the steepness of the change:
@@ -462,7 +462,7 @@ biplot(mod, col=c(4,1))
 
 - There can be a huge number of species axes, and we cannot see them all
 
-- We rotate the species space so that we see as much as possible of the 
+- We **rotate** the species space so that we see as much as possible of the 
   locations of the points: This is the **PCA!**
 
 - Originally we had a *species*-dimensional space, and we *reduce* it
@@ -486,7 +486,7 @@ ordiplot3d(bott0, mar=c(4,4,0,2), angle=20, pch=16, col=2, ax.col=4)
 - Analysis of complete data is pretty similar to the analysis of these
   three species
 
-- PCA analyses variances and shows absolute differences from the mean
+- PCA analyses variances and shows absolute differences from the species mean
   $y - \bar y$: minor species change little in absolute units
 
 - Actually only some few species influence results, and the data are
@@ -510,7 +510,7 @@ biplot(modf, col=c(4,1))
 
 - Abundant species have high variance, and PCA explains variance
 
-- It may be very easy to explain variance, when only a few species
+- It may be very easy to explain variance when only a few species
   account for the most, because then data are not very
   multidimensional
 
@@ -544,7 +544,7 @@ ordilabel(cbind(colMeans(varespec), v), priority = v, fill = "yellow", cex=1)
 - Equalized data are more multidimensional, and scarce species will
   also influence the result, and the ordination changes from the previous
 
-- PCA implies that species effects should be shown by arrows, but this
+- PCA implies that species should be shown by arrows, but this
   makes graphs very messy, and often it makes sense to drop arrows and
   just show the species scores at arrowheads
 
@@ -865,7 +865,7 @@ abline(h=0, v=0, lty=3)
 - This inertia is **not** variance but $\chi^2$, and eigenvalues or percentages
   cannot be compared with PCA
 
-- The eigenvalue is bound to be $\lambda \le 1$
+- The eigenvalue is bound to be $\lambda \le 1$ (and $\lambda \ge 0$)
 
 - High eigenvalue is good, but too high (say, $\lambda > 0.7$) are
   suspicious: disjunct or partly disjunct data where a group of SUs
