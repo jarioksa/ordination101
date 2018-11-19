@@ -1601,7 +1601,6 @@ the analysis of designed experiments.
 - Constrained Ordination: Find the *linear combination* of
   **constraints** that best explains all species
 
-- These two alternative strategies lead to the same result:
 
 .pull-left[
 
@@ -1690,7 +1689,7 @@ for(i in 1:3) {
     axis explained $\lambda_1=$ `r round(cmod$CCA$eig[1], 1)`
 
 - We had two constraints (`Al` & `P`) and therefore we had two constrained
-  axes: the **rank** of constraints was 2
+  axes: the *rank* of constraints was 2
 
 - Both methods gave the same two constrained axes and the same
   eigenvalues (explained variance)
@@ -1773,7 +1772,7 @@ class: inverse center middle
 .pull-left[
 
 - LC scores really are linear combinations of constraints, and when
-  projected onto biplot arrows, they fall on the values of constraints
+  projected onto biplot arrows, they are the observed values of constraints
 
 - When WA scores are projected onto biplot arrows, they give the
   prediction of environmental conditions from species data:
@@ -1795,13 +1794,13 @@ class: inverse center middle
 par(mar=c(4,4,0,1)+.1)
 palette(viridis(8))
 mrda <- rda(varespec ~ Al + P, varechem)
-plot(mrda, dis=c("wa","bp"), type="n")
-points(mrda, dis="wa", pch=21, bg=8, col=1)
-points(mrda, dis="lc", pch=21, bg=4, col=1)
-text(mrda, dis="bp", col=1, lwd=2)
-Alfit <- ordisurf(mrda ~ Al, varechem, plot=FALSE, knots=1, display="lc")
-Pfit <- ordisurf(mrda ~ P, varechem, plot=FALSE, knots=1,display="lc")
-xy <- scores(mrda, dis="wa", choices=1:2)
+plot(mrda, dis=c("wa","bp"), type="n", scaling="si")
+points(mrda, dis="wa", pch=21, bg=8, col=1, scaling="si")
+points(mrda, dis="lc", pch=21, bg=4, col=1, scaling="si")
+text(mrda, dis="bp", col=1, lwd=2, scaling="si")
+Alfit <- ordisurf(mrda ~ Al, varechem, plot=FALSE, knots=1, display="lc", scaling="si")
+Pfit <- ordisurf(mrda ~ P, varechem, plot=FALSE, knots=1,display="lc", scaling="si")
+xy <- scores(mrda, dis="wa", choices=1:2,scaling="si")
 xn1 <- seq(min(xy[,1]), max(xy[,1]), len=31)
 xn2 <- seq(min(xy[,2]), max(xy[,2]), len=31)
 xy <- data.frame(expand.grid(x1=xn1, x2=xn2))
@@ -1956,7 +1955,7 @@ Dune Meadows constrained by Management
 ]
 
 .pull-right[
-```{r rdacalib, fig.height=4.5}
+```{r rdacalib, fig.height=4}
 par(mar=c(4,4,0,1)+.1)
 palette(viridis(8))
 mmite <- rda(decostand(mite, "hell") ~ WatrCont + SubsDens + Topo + Shrub,
@@ -2259,7 +2258,7 @@ anova(mdown, by="margin")
 ```
 
 - **Backward elimination:** variables are removed if they do not have
-    a unique importance
+    unique importance
 
 - Similar to *marginal* tests for terms
 
@@ -2290,7 +2289,7 @@ anova(mdown, by="margin")
 
   - The best possible constraint is an unconstrained ordination axis
     (PC, CA), and with automatical model choice we try to get as close
-    to those as possible
+    to that as possible
 
 - The best use of constrained methods is for designed patterns, and
   the next good is strict constraint with interesting variables
