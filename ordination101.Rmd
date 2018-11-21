@@ -1655,7 +1655,7 @@ for(i in 1:3) {
 ```{r rdamethod2a, fig.width=8}
 par(mar=c(4,4,0,1)+.1)
 palette(viridis(8))
-pairs(fitted(cmod), pch=16, col=4, ylim=range(fitted(cmod)), panel=panel.lm)
+pairs(fitted(cmod), pch=16, col=4, ylim=range(fitted(cmod)), panel=panel.lm, labels = paste("Fit", colnames(bott0)))
 ```
 
 ---
@@ -1670,7 +1670,7 @@ koef <- paste(formatC(koef, digits=2, flag="+"), names(koef), sep="*", collapse=
 fv <- fitted(cmod)
 ylim <- range(fv)
 for(i in 1:3) {
-   plot(rda1, fv[,i], ylim=ylim, xlab=koef, ylab=colnames(fv)[i], type="n", cex.lab=1.5, cex=1.2)
+   plot(rda1, fv[,i], ylim=ylim, xlab=koef, ylab=paste("Fit", colnames(fv)[i]), type="n", cex.lab=1.5, cex=1.2)
    panel.lm(rda1, fv[,i], pch=16, col=2, col.smooth=4)
 }
 ```
